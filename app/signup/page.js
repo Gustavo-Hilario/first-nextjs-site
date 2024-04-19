@@ -1,4 +1,4 @@
-import Header from '../components/header';
+import Header from '../components/pagetoparea';
 export default function Signup() {
     return (
         <div>

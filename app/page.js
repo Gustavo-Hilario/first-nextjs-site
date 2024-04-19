@@ -1,9 +1,9 @@
-import Header from './components/header';
+import PageTopArea from './components/pagetoparea';
 
 export default function Home() {
     return (
         <>
-            <Header title='Home Page Yeah!' />
+            <PageTopArea />
             <h1>Home Page</h1>
         </>
     );
