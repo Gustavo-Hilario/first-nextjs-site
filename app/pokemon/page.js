@@ -4,10 +4,10 @@ import Loading from './loading';
 
 import Pokemon from './components/pokemon';
 
-export default function Blog() {
+export default function PokemonPage() {
     return (
         <div>
-            <h3>Hi from the Blog Page </h3>
+            <h3>Pokemon</h3>
             <Suspense fallback={<Loading />}>
                 <Pokemon />
             </Suspense>

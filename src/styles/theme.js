@@ -2,17 +2,19 @@ import { createTheme } from '@mui/material/styles';
 
 let theme = createTheme({
     palette: {
+        mode: 'dark',
         primary: {
-            main: '#556cd6',
+            main: '#bcc5e6',
         },
         secondary: {
-            main: '#19857b',
-        },
-        error: {
-            main: '#f44336',
+            main: '#009825',
         },
         background: {
-            default: '#fff',
+            default: '#2b4600',
+            paper: '#060112',
+        },
+        text: {
+            primary: '#edd6f9',
         },
     },
 });

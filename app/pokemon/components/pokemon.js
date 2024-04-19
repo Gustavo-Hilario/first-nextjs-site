@@ -2,27 +2,27 @@
 import { useEffect, useState } from 'react';
 
 import { getAllPokemons, getPokemonDetail } from '../../lb/data/pokemonAPI';
-import PokemonDetail from '../../components/pokemonDetail';
+import PokemonDetail from './pokemonDetail';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Avatar from '@mui/material/Avatar';
 
 const NUMBER_OF_POKEMON_AVATARS = 20;
-let numberOfAvatarsToRender = [];
 
 export default function Pokemon() {
     const [allPokemons, setAllPokemons] = useState([]);
-    const [getPokemonsLoadingLimit, setGetPokemonsLoadingLimit] = useState(150);
-    const [getPokemonsOffset, setGetPokemonsOffset] = useState(0);
+    const [PokemonsLoadingLimit, setPokemonsLoadingLimit] = useState(150);
+    const [PokemonsOffset, setPokemonsOffset] = useState(0);
     const [selectedPokemon, setSelectedPokemon] = useState({});
     const [pokemonInfo, setPokemonInfo] = useState({});
+    const [randomPokemonIDs, setRandomPokemonIDs] = useState([]);
 
     useEffect(() => {
         async function fetchPokemons() {
             const data = await getAllPokemons(
-                getPokemonsLoadingLimit,
-                getPokemonsOffset
+                PokemonsLoadingLimit,
+                PokemonsOffset
             );
             const promises = data.map(async (pokemon) => {
                 const details = await getPokemonDetail(pokemon.name);
@@ -36,14 +36,6 @@ export default function Pokemon() {
 
             const pokemonNames = await Promise.all(promises);
             setAllPokemons(pokemonNames);
-            numberOfAvatarsToRender = randomNumberOfPokemonsToRender(
-                getPokemonsOffset,
-                getPokemonsLoadingLimit,
-                NUMBER_OF_POKEMON_AVATARS
-            );
-            setGetPokemonsLoadingLimit(300);
-            setGetPokemonsOffset(150);
-            return numberOfAvatarsToRender;
         }
 
         fetchPokemons();
@@ -56,7 +48,6 @@ export default function Pokemon() {
                 const data = await getPokemonDetail(
                     selectedPokemon.name.toLowerCase()
                 );
-                console.log(data);
                 setPokemonInfo({
                     name: data.name,
                     weight: data.weight,
@@ -68,14 +59,18 @@ export default function Pokemon() {
         }
 
         fetchPokemonDetail();
-    }, [selectedPokemon]);
-
-    // console.log(allPokemons);
-    // console.log(selectedPokemon);
+        setRandomPokemonIDs(
+            randomNumberOfPokemonsToRender(
+                PokemonsOffset,
+                PokemonsLoadingLimit,
+                NUMBER_OF_POKEMON_AVATARS
+            )
+        );
+    }, [selectedPokemon, PokemonsLoadingLimit, PokemonsOffset]);
 
     function randomNumberOfPokemonsToRender(
-        getPokemonsOffset,
-        getPokemonsLoadingLimit,
+        PokemonsOffset,
+        PokemonsLoadingLimit,
         numberOfPokemons
     ) {
         const numbers = new Set();
@@ -83,9 +78,8 @@ export default function Pokemon() {
         while (numbers.size < numberOfPokemons) {
             const randomNumber =
                 Math.floor(
-                    Math.random() *
-                        (getPokemonsLoadingLimit - getPokemonsOffset + 1)
-                ) + getPokemonsOffset;
+                    Math.random() * (PokemonsLoadingLimit - PokemonsOffset + 1)
+                ) + PokemonsOffset;
 
             numbers.add(randomNumber);
         }
@@ -93,7 +87,6 @@ export default function Pokemon() {
         return [...numbers];
     }
 
-    console.log(numberOfAvatarsToRender);
     return (
         <div>
             <div
@@ -108,7 +101,7 @@ export default function Pokemon() {
                 }}
             >
                 {allPokemons.map((pokemon, index) => {
-                    if (numberOfAvatarsToRender.includes(index)) {
+                    if (randomPokemonIDs.includes(index)) {
                         return (
                             <Avatar
                                 key={pokemon.name}
