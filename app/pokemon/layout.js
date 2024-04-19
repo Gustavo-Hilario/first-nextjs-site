@@ -1,7 +1,7 @@
 // Generate metadata for the layout applied to the Blog page.
 export const metadata = {
-    title: 'Blog',
-    description: 'Access all the latest blog posts.',
+    title: 'Pokemon',
+    description: 'Check out some Pokemon info',
 };
 
 export default function DashboardLayout({ children }) {
