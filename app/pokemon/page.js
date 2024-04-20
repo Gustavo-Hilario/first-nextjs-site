@@ -2,12 +2,31 @@
 import { Suspense } from 'react';
 import Loading from './loading';
 
+import Typography from '@mui/material/Typography';
+
 import Pokemon from './components/pokemon';
 
 export default function PokemonPage() {
     return (
         <div>
-            <h3>Pokemon</h3>
+            <Typography
+                variant='h2'
+                noWrap
+                component='a'
+                href='#app-bar-with-responsive-menu'
+                sx={{
+                    mr: 2,
+                    display: { xs: 'none', md: 'flex' },
+                    fontFamily: 'monospace',
+                    fontWeight: 700,
+                    letterSpacing: '.3rem',
+                    color: 'inherit',
+                    textDecoration: 'none',
+                    justifyContent: 'center',
+                }}
+            >
+                Pokemons
+            </Typography>
             <Suspense fallback={<Loading />}>
                 <Pokemon />
             </Suspense>

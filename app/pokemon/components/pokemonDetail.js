@@ -7,7 +7,14 @@ import { CardActionArea } from '@mui/material';
 export default function PokemonDetail({ pokemonInfo }) {
     return (
         <div>
-            <h3>Pokemon Detail</h3>
+            <Typography
+                variant='h4'
+                sx={{
+                    textAlign: 'center',
+                }}
+            >
+                Details
+            </Typography>
             {Object.keys(pokemonInfo).length !== 0 ? (
                 <div
                     style={{
@@ -35,10 +42,7 @@ export default function PokemonDetail({ pokemonInfo }) {
                                     {pokemonInfo.name.charAt(0).toUpperCase() +
                                         pokemonInfo.name.slice(1)}
                                 </Typography>
-                                <Typography
-                                    variant='body2'
-                                    color='text.secondary'
-                                >
+                                <Typography variant='body2' color='secondary'>
                                     <p>{`Weight: ${pokemonInfo.weight}`}</p>
                                     <p>{`Height: ${pokemonInfo.height}`}</p>
                                     <br />

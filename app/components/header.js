@@ -54,7 +54,7 @@ export default function Header() {
     };
 
     return (
-        <AppBar position='static' color='secondary'>
+        <AppBar position='static'>
             <Container maxWidth='xl'>
                 <Toolbar disableGutters>
                     {/* Desktop Content */}

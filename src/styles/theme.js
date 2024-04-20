@@ -1,16 +1,18 @@
+'use client';
+
 import { createTheme } from '@mui/material/styles';
 
-let theme = createTheme({
+const theme = createTheme({
     palette: {
         mode: 'dark',
         primary: {
-            main: '#bcc5e6',
+            main: '#6687fd',
         },
         secondary: {
-            main: '#009825',
+            main: '#00af2e',
         },
         background: {
-            default: '#2b4600',
+            default: '#0d0016',
             paper: '#060112',
         },
         text: {
