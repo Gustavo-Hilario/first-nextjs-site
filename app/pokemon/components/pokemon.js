@@ -7,22 +7,31 @@ import PokemonDetail from './pokemonDetail';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
+
+import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
+import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 
 const NUMBER_OF_POKEMON_AVATARS = 20;
 
 export default function Pokemon() {
     const [allPokemons, setAllPokemons] = useState([]);
-    const [PokemonsLoadingLimit, setPokemonsLoadingLimit] = useState(150);
-    const [PokemonsOffset, setPokemonsOffset] = useState(0);
+    const [pokemonsLoadingLimit, setPokemonsLoadingLimit] = useState(150);
+    const [pokemonsOffset, setPokemonsOffset] = useState(0);
     const [selectedPokemon, setSelectedPokemon] = useState({});
     const [pokemonInfo, setPokemonInfo] = useState({});
     const [randomPokemonIDs, setRandomPokemonIDs] = useState([]);
+    // const [loadingMorePokemons, setLoadingMorePokemons] = useState(false);
 
     useEffect(() => {
         async function fetchPokemons() {
             const data = await getAllPokemons(
-                PokemonsLoadingLimit,
-                PokemonsOffset
+                pokemonsLoadingLimit,
+                pokemonsOffset
             );
             const promises = data.map(async (pokemon) => {
                 const details = await getPokemonDetail(pokemon.name);
@@ -39,7 +48,7 @@ export default function Pokemon() {
         }
 
         fetchPokemons();
-    }, []);
+    }, [pokemonsLoadingLimit, pokemonsOffset]);
 
     useEffect(() => {
         async function fetchPokemonDetail() {
@@ -62,17 +71,18 @@ export default function Pokemon() {
 
         fetchPokemonDetail();
         setRandomPokemonIDs(
+            // Randomly select 20 pokemons to render from the newly fetched pokemons
             randomNumberOfPokemonsToRender(
-                PokemonsOffset,
-                PokemonsLoadingLimit,
+                pokemonsOffset,
+                pokemonsLoadingLimit,
                 NUMBER_OF_POKEMON_AVATARS
             )
         );
-    }, [selectedPokemon, PokemonsLoadingLimit, PokemonsOffset]);
+    }, [selectedPokemon, pokemonsLoadingLimit, pokemonsOffset]);
 
     function randomNumberOfPokemonsToRender(
-        PokemonsOffset,
-        PokemonsLoadingLimit,
+        pokemonsOffset,
+        pokemonsLoadingLimit,
         numberOfPokemons
     ) {
         const numbers = new Set();
@@ -80,8 +90,8 @@ export default function Pokemon() {
         while (numbers.size < numberOfPokemons) {
             const randomNumber =
                 Math.floor(
-                    Math.random() * (PokemonsLoadingLimit - PokemonsOffset + 1)
-                ) + PokemonsOffset;
+                    Math.random() * (pokemonsLoadingLimit - pokemonsOffset + 1)
+                ) + pokemonsOffset;
 
             numbers.add(randomNumber);
         }
@@ -89,6 +99,7 @@ export default function Pokemon() {
         return [...numbers];
     }
 
+    console.log('allPokemons:', allPokemons);
     return (
         <div>
             <div
@@ -123,7 +134,90 @@ export default function Pokemon() {
                         );
                     }
                 })}
+            </div>
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: 2,
+                    textAlign: 'center',
+                    m: 2,
+                }}
+            >
+                <Typography
+                    variant='body1'
+                    sx={{
+                        textAlign: 'center',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                    }}
+                >
+                    <p>
+                        Displaying{' '}
+                        <span>
+                            <b>{NUMBER_OF_POKEMON_AVATARS}</b>
+                        </span>{' '}
+                        Pokemons out of{' '}
+                        <span>
+                            <b>{allPokemons.length}</b>
+                        </span>
+                    </p>
+                    {/* {`Displaying ${NUMBER_OF_POKEMON_AVATARS} Pokemons out of `} */}
+                    <Tooltip
+                        title={`Between elements ${pokemonsOffset} and ${pokemonsLoadingLimit} from the list of all pokemons`}
+                    >
+                        <InfoRoundedIcon fontSize='small' />
+                    </Tooltip>
+                </Typography>
 
+                <Button
+                    size='small'
+                    variant='bggradient'
+                    color='secondary'
+                    onClick={() => {
+                        setRandomPokemonIDs(
+                            // Randomly select 20 pokemons to render from the newly fetched pokemons
+                            randomNumberOfPokemonsToRender(
+                                pokemonsOffset,
+                                pokemonsLoadingLimit,
+                                NUMBER_OF_POKEMON_AVATARS
+                            )
+                        );
+                    }}
+                >
+                    <RefreshRoundedIcon />
+                    Refresh Avatars
+                </Button>
+                <Button
+                    size='small'
+                    variant='bggradient'
+                    color='secondary'
+                    onClick={() => {
+                        setPokemonsOffset(0);
+                        setPokemonsLoadingLimit(150);
+                    }}
+                >
+                    <RefreshRoundedIcon />
+                    Reset
+                </Button>
+            </Box>
+            <Box
+                component='section'
+                display={{ sm: 'flex' }}
+                alignItems='center'
+                justifyContent='center'
+                gap={2}
+                sx={{
+                    display: {
+                        sm: 'flex',
+                    },
+                    justifyContent: 'center',
+                    gap: 2,
+                    textAlign: 'center',
+                    m: 2,
+                }}
+            >
                 <Autocomplete
                     disablePortal
                     id='pick-your-pokemon'
@@ -136,7 +230,19 @@ export default function Pokemon() {
                             ? selectedPokemon.name
                             : ''
                     }
-                    sx={{ width: 300 }}
+                    sx={{
+                        width: {
+                            xs: 'auto',
+                            sm: 250,
+                            md: 300,
+                            lg: 400,
+                            xl: 500,
+                        },
+                        mb: {
+                            xs: 2,
+                            sm: 0,
+                        },
+                    }}
                     getOptionLabel={(option) => option}
                     renderInput={(params) => (
                         <TextField {...params} label='Pokemon' />
@@ -150,7 +256,24 @@ export default function Pokemon() {
                         setSelectedPokemon({});
                     }}
                 />
-            </div>
+                <Button
+                    size='small'
+                    variant='bggradient'
+                    color='secondary'
+                    onClick={() => {
+                        // Load more pokemons -- max number of pokemons will be 1050
+                        if (pokemonsLoadingLimit >= 1050) {
+                            return;
+                        }
+
+                        setPokemonsOffset(pokemonsLoadingLimit);
+                        setPokemonsLoadingLimit(pokemonsLoadingLimit + 150);
+                    }}
+                >
+                    <AddCircleOutlineRoundedIcon />
+                    Load More Pokemons
+                </Button>{' '}
+            </Box>
             <PokemonDetail
                 pokemonInfo={pokemonInfo}
                 selectedPokemon={selectedPokemon}
