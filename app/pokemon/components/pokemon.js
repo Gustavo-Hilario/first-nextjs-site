@@ -106,10 +106,14 @@ export default function Pokemon() {
                     if (randomPokemonIDs.includes(index)) {
                         return (
                             <Avatar
+                                variant='circular'
                                 key={pokemon.name}
                                 alt={pokemon.name}
                                 src={pokemon.image}
-                                sx={{ width: 80, height: 80 }}
+                                sx={{
+                                    width: 80,
+                                    height: 80,
+                                }}
                                 onClick={() =>
                                     setSelectedPokemon({
                                         name: pokemon.name,

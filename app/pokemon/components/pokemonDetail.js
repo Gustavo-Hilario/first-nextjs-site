@@ -19,7 +19,7 @@ export default function PokemonDetail({
                     display: 'flex',
                     justifyContent: 'center',
                     gap: 2,
-                    '& button': { m: 1, fontSize: '0.5rem' },
+                    '& button': { m: 1, fontSize: '0.6rem' },
                 }}
             >
                 <Typography
@@ -33,7 +33,7 @@ export default function PokemonDetail({
                 {Object.keys(selectedPokemon).length !== 0 ? (
                     <Button
                         size='small'
-                        variant='outlined'
+                        variant='bggradient'
                         color='secondary'
                         onClick={() => {
                             setSelectedPokemon({});

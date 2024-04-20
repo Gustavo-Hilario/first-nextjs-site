@@ -19,6 +19,31 @@ const theme = createTheme({
             primary: '#edd6f9',
         },
     },
+
+    components: {
+        // Name of the component
+        MuiAvatar: {
+            styleOverrides: {
+                // Name of the slot
+                root: {
+                    // Some CSS
+                    backgroundColor: '#edd6f9',
+                },
+            },
+        },
+        MuiButton: {
+            variants: [
+                {
+                    props: { variant: 'bggradient' },
+                    style: {
+                        textTransform: 'none',
+                        background:
+                            'linear-gradient(135deg, rgba(237,214,249,1) 0%, rgba(9,9,121,1) 50%, rgba(2,121,145,1) 100%)',
+                    },
+                },
+            ],
+        },
+    },
 });
 
 export default theme;
