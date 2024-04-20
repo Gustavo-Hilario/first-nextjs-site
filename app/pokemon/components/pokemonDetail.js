@@ -3,18 +3,60 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
-export default function PokemonDetail({ pokemonInfo }) {
+export default function PokemonDetail({
+    pokemonInfo,
+    selectedPokemon,
+    setSelectedPokemon,
+}) {
     return (
         <div>
-            <Typography
-                variant='h4'
+            <Box
+                component='section'
                 sx={{
-                    textAlign: 'center',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: 2,
+                    '& button': { m: 1, fontSize: '0.5rem' },
                 }}
             >
-                Details
-            </Typography>
+                <Typography
+                    variant='h4'
+                    sx={{
+                        textAlign: 'center',
+                    }}
+                >
+                    Details
+                </Typography>
+                {Object.keys(selectedPokemon).length !== 0 ? (
+                    <Button
+                        size='small'
+                        variant='outlined'
+                        color='secondary'
+                        onClick={() => {
+                            setSelectedPokemon({});
+                        }}
+                    >
+                        Clear
+                    </Button>
+                ) : (
+                    ''
+                )}
+            </Box>
+            {Object.keys(pokemonInfo).length === 0 ? (
+                <Typography
+                    variant='body1'
+                    sx={{
+                        textAlign: 'center',
+                    }}
+                >
+                    No pokemon selected!
+                </Typography>
+            ) : (
+                ''
+            )}
             {Object.keys(pokemonInfo).length !== 0 ? (
                 <div
                     style={{
@@ -66,7 +108,7 @@ export default function PokemonDetail({ pokemonInfo }) {
                     </Card>
                 </div>
             ) : (
-                <p>No Pokemon selected</p>
+                ''
             )}
         </div>
     );

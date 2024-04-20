@@ -55,6 +55,8 @@ export default function Pokemon() {
                     abilities: data.abilities,
                     image: data.sprites?.front_default,
                 });
+            } else {
+                setPokemonInfo({});
             }
         }
 
@@ -121,23 +123,35 @@ export default function Pokemon() {
                 <Autocomplete
                     disablePortal
                     id='pick-your-pokemon'
-                    options={allPokemons}
+                    clearOnEscape
+                    options={allPokemons.map((pokemon) => {
+                        return pokemon.name;
+                    })}
+                    value={
+                        Object.keys(selectedPokemon).length !== 0
+                            ? selectedPokemon.name
+                            : ''
+                    }
                     sx={{ width: 300 }}
-                    getOptionLabel={(option) => option.name}
+                    getOptionLabel={(option) => option}
                     renderInput={(params) => (
                         <TextField {...params} label='Pokemon' />
                     )}
                     onChange={(event, value) => {
-                        {
-                            value !== null &&
-                                setSelectedPokemon({ name: value.name });
+                        console.log(event);
+                        if (value !== null) {
+                            setSelectedPokemon({ name: value });
+                            return;
                         }
+                        setSelectedPokemon({});
                     }}
-                    selectOnFocus
-                    clearOnBlur
                 />
             </div>
-            <PokemonDetail pokemonInfo={pokemonInfo} />
+            <PokemonDetail
+                pokemonInfo={pokemonInfo}
+                selectedPokemon={selectedPokemon}
+                setSelectedPokemon={setSelectedPokemon}
+            />
         </div>
     );
 }

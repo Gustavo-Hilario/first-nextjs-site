@@ -58,14 +58,16 @@ export default function Header() {
             <Container maxWidth='xl'>
                 <Toolbar disableGutters>
                     {/* Desktop Content */}
-                    <LogoDevIcon
-                        sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
-                    />
+                    <Link href='/'>
+                        <LogoDevIcon
+                            sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
+                        />
+                    </Link>
+
                     <Typography
                         variant='h6'
                         noWrap
-                        component='a'
-                        href='#app-bar-with-responsive-menu'
+                        component='h1'
                         sx={{
                             mr: 2,
                             display: { xs: 'none', md: 'flex' },
@@ -76,7 +78,7 @@ export default function Header() {
                             textDecoration: 'none',
                         }}
                     >
-                        Gustavo
+                        <Link href='/'>Gustavo</Link>
                     </Typography>
 
                     <Box
@@ -132,14 +134,16 @@ export default function Header() {
                     </Box>
 
                     {/* Mobile Content */}
-                    <LogoDevIcon
-                        sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
-                    />
+                    <Link href='/'>
+                        <LogoDevIcon
+                            sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
+                        />
+                    </Link>
 
                     <Typography
                         variant='h5'
                         noWrap
-                        component='a'
+                        component='h1'
                         href='#app-bar-with-responsive-menu'
                         sx={{
                             mr: 2,
@@ -152,7 +156,7 @@ export default function Header() {
                             textDecoration: 'none',
                         }}
                     >
-                        LOGO
+                        <Link href='/'>Gustavo</Link>
                     </Typography>
                     <Box
                         sx={{
