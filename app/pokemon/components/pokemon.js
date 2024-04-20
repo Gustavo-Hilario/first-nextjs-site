@@ -17,16 +17,22 @@ import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 const NUMBER_OF_POKEMON_AVATARS = 20;
 
 export default function Pokemon() {
+    // Setting to check if the screen is mobile -- then use that to text accordingly
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
     const [allPokemons, setAllPokemons] = useState([]);
     const [pokemonsLoadingLimit, setPokemonsLoadingLimit] = useState(150);
     const [pokemonsOffset, setPokemonsOffset] = useState(0);
     const [selectedPokemon, setSelectedPokemon] = useState({});
     const [pokemonInfo, setPokemonInfo] = useState({});
     const [randomPokemonIDs, setRandomPokemonIDs] = useState([]);
-    // const [loadingMorePokemons, setLoadingMorePokemons] = useState(false);
 
     useEffect(() => {
         async function fetchPokemons() {
@@ -149,6 +155,7 @@ export default function Pokemon() {
             >
                 <Grid container gap={2}>
                     <Grid
+                        container
                         xs={12}
                         sx={{
                             display: 'flex',
@@ -227,15 +234,11 @@ export default function Pokemon() {
                             // }}
                             sx={{
                                 width: {
-                                    xs: 'auto',
+                                    xs: '100%',
                                     sm: 250,
                                     md: 300,
                                     lg: 400,
                                     xl: 500,
-                                },
-                                mb: {
-                                    xs: 2,
-                                    sm: 0,
                                 },
                             }}
                             getOptionLabel={(option) => option}
@@ -278,7 +281,7 @@ export default function Pokemon() {
                             }}
                         >
                             <AddCircleOutlineRoundedIcon />
-                            Load More Pokemons
+                            Load More{!isMobile && ' Pokemons'}
                         </Button>
                         <Button
                             size='small'
