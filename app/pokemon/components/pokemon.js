@@ -11,8 +11,9 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
-import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
+import Grid from '@mui/system/Unstable_Grid';
 
+import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 
@@ -62,6 +63,7 @@ export default function Pokemon() {
                     weight: data.weight,
                     height: data.height,
                     abilities: data.abilities,
+                    stats: data.stats,
                     image: data.sprites?.front_default,
                 });
             } else {
@@ -99,7 +101,6 @@ export default function Pokemon() {
         return [...numbers];
     }
 
-    console.log('allPokemons:', allPokemons);
     return (
         <div>
             <div
@@ -122,8 +123,8 @@ export default function Pokemon() {
                                 alt={pokemon.name}
                                 src={pokemon.image}
                                 sx={{
-                                    width: 80,
-                                    height: 80,
+                                    width: 100,
+                                    height: 100,
                                 }}
                                 onClick={() =>
                                     setSelectedPokemon({
@@ -138,69 +139,162 @@ export default function Pokemon() {
             <Box
                 sx={{
                     display: 'flex',
+                    flexGrow: 1,
                     justifyContent: 'center',
+                    alignItems: 'center',
                     gap: 2,
                     textAlign: 'center',
                     m: 2,
                 }}
             >
-                <Typography
-                    variant='body1'
-                    sx={{
-                        textAlign: 'center',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1,
-                    }}
-                >
-                    <p>
-                        Displaying{' '}
-                        <span>
-                            <b>{NUMBER_OF_POKEMON_AVATARS}</b>
-                        </span>{' '}
-                        Pokemons out of{' '}
-                        <span>
-                            <b>{allPokemons.length}</b>
-                        </span>
-                    </p>
-                    {/* {`Displaying ${NUMBER_OF_POKEMON_AVATARS} Pokemons out of `} */}
-                    <Tooltip
-                        title={`Between elements ${pokemonsOffset} and ${pokemonsLoadingLimit} from the list of all pokemons`}
+                <Grid container gap={2}>
+                    <Grid
+                        xs={12}
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            gap: 2,
+                        }}
                     >
-                        <InfoRoundedIcon fontSize='small' />
-                    </Tooltip>
-                </Typography>
+                        <Typography
+                            variant='body1'
+                            sx={{
+                                textAlign: 'center',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1,
+                            }}
+                        >
+                            Displaying{' '}
+                            <span>
+                                <b>{NUMBER_OF_POKEMON_AVATARS}</b>
+                            </span>{' '}
+                            Pokemons out of{' '}
+                            <span>
+                                <b>{allPokemons.length}</b>
+                            </span>
+                            {/* {`Displaying ${NUMBER_OF_POKEMON_AVATARS} Pokemons out of `} */}
+                            <Tooltip
+                                title={`Between elements ${pokemonsOffset} and ${pokemonsLoadingLimit} from the list of all pokemons`}
+                            >
+                                <InfoRoundedIcon fontSize='small' />
+                            </Tooltip>
+                        </Typography>
+                        <Button
+                            size='small'
+                            variant='bggradient'
+                            color='secondary'
+                            onClick={() => {
+                                setRandomPokemonIDs(
+                                    // Randomly select 20 pokemons to render from the newly fetched pokemons
+                                    randomNumberOfPokemonsToRender(
+                                        pokemonsOffset,
+                                        pokemonsLoadingLimit,
+                                        NUMBER_OF_POKEMON_AVATARS
+                                    )
+                                );
+                            }}
+                        >
+                            <RefreshRoundedIcon />
+                            Refresh Avatars
+                        </Button>
+                    </Grid>
+                    <Grid
+                        xs={12}
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            gap: 2,
+                        }}
+                    >
+                        <Autocomplete
+                            disablePortal
+                            id='pick-your-pokemon'
+                            clearOnEscape
+                            options={allPokemons.map((pokemon) => {
+                                return pokemon.name;
+                            })}
+                            value={
+                                Object.keys(selectedPokemon).length !== 0
+                                    ? selectedPokemon.name
+                                    : 'Pikachu'
+                            }
+                            // isOptionEqualToValue={(option, value) => {
+                            //     console.log(typeof option, typeof value);
+                            //     option === value;
+                            // }}
+                            sx={{
+                                width: {
+                                    xs: 'auto',
+                                    sm: 250,
+                                    md: 300,
+                                    lg: 400,
+                                    xl: 500,
+                                },
+                                mb: {
+                                    xs: 2,
+                                    sm: 0,
+                                },
+                            }}
+                            getOptionLabel={(option) => option}
+                            renderInput={(params) => (
+                                <TextField {...params} label='Pokemon' />
+                            )}
+                            onChange={(event, value) => {
+                                console.log(event);
+                                if (value !== null) {
+                                    setSelectedPokemon({ name: value });
+                                    return;
+                                }
+                                setSelectedPokemon({});
+                            }}
+                        />
+                    </Grid>
+                    <Grid
+                        xs={12}
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            gap: 2,
+                        }}
+                    >
+                        <Button
+                            size='small'
+                            variant='bggradient'
+                            color='secondary'
+                            onClick={() => {
+                                // Load more pokemons -- max number of pokemons will be 1050
+                                if (pokemonsLoadingLimit >= 1050) {
+                                    return;
+                                }
 
-                <Button
-                    size='small'
-                    variant='bggradient'
-                    color='secondary'
-                    onClick={() => {
-                        setRandomPokemonIDs(
-                            // Randomly select 20 pokemons to render from the newly fetched pokemons
-                            randomNumberOfPokemonsToRender(
-                                pokemonsOffset,
-                                pokemonsLoadingLimit,
-                                NUMBER_OF_POKEMON_AVATARS
-                            )
-                        );
-                    }}
-                >
-                    <RefreshRoundedIcon />
-                    Refresh Avatars
-                </Button>
-                <Button
-                    size='small'
-                    variant='bggradient'
-                    color='secondary'
-                    onClick={() => {
-                        setPokemonsOffset(0);
-                        setPokemonsLoadingLimit(150);
-                    }}
-                >
-                    <RefreshRoundedIcon />
-                    Reset
-                </Button>
+                                setPokemonsOffset(pokemonsLoadingLimit);
+                                setPokemonsLoadingLimit(
+                                    pokemonsLoadingLimit + 150
+                                );
+                            }}
+                        >
+                            <AddCircleOutlineRoundedIcon />
+                            Load More Pokemons
+                        </Button>
+                        <Button
+                            size='small'
+                            variant='bggradient'
+                            color='secondary'
+                            onClick={() => {
+                                setPokemonsOffset(0);
+                                setPokemonsLoadingLimit(150);
+                                setSelectedPokemon({});
+                            }}
+                        >
+                            <RefreshRoundedIcon />
+                            Reset
+                        </Button>
+                    </Grid>
+                </Grid>
             </Box>
             <Box
                 component='section'
@@ -217,63 +311,7 @@ export default function Pokemon() {
                     textAlign: 'center',
                     m: 2,
                 }}
-            >
-                <Autocomplete
-                    disablePortal
-                    id='pick-your-pokemon'
-                    clearOnEscape
-                    options={allPokemons.map((pokemon) => {
-                        return pokemon.name;
-                    })}
-                    value={
-                        Object.keys(selectedPokemon).length !== 0
-                            ? selectedPokemon.name
-                            : ''
-                    }
-                    sx={{
-                        width: {
-                            xs: 'auto',
-                            sm: 250,
-                            md: 300,
-                            lg: 400,
-                            xl: 500,
-                        },
-                        mb: {
-                            xs: 2,
-                            sm: 0,
-                        },
-                    }}
-                    getOptionLabel={(option) => option}
-                    renderInput={(params) => (
-                        <TextField {...params} label='Pokemon' />
-                    )}
-                    onChange={(event, value) => {
-                        console.log(event);
-                        if (value !== null) {
-                            setSelectedPokemon({ name: value });
-                            return;
-                        }
-                        setSelectedPokemon({});
-                    }}
-                />
-                <Button
-                    size='small'
-                    variant='bggradient'
-                    color='secondary'
-                    onClick={() => {
-                        // Load more pokemons -- max number of pokemons will be 1050
-                        if (pokemonsLoadingLimit >= 1050) {
-                            return;
-                        }
-
-                        setPokemonsOffset(pokemonsLoadingLimit);
-                        setPokemonsLoadingLimit(pokemonsLoadingLimit + 150);
-                    }}
-                >
-                    <AddCircleOutlineRoundedIcon />
-                    Load More Pokemons
-                </Button>{' '}
-            </Box>
+            ></Box>
             <PokemonDetail
                 pokemonInfo={pokemonInfo}
                 selectedPokemon={selectedPokemon}

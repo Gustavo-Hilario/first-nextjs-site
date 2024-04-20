@@ -71,7 +71,7 @@ export default function PokemonDetail({
                         <CardActionArea>
                             <CardMedia
                                 component='img'
-                                height='140'
+                                height='auto'
                                 image={pokemonInfo.image}
                                 alt={pokemonInfo.name}
                             />
@@ -84,25 +84,71 @@ export default function PokemonDetail({
                                     {pokemonInfo.name.charAt(0).toUpperCase() +
                                         pokemonInfo.name.slice(1)}
                                 </Typography>
-                                <Typography variant='body2' color='secondary'>
-                                    <p>{`Weight: ${pokemonInfo.weight}`}</p>
-                                    <p>{`Height: ${pokemonInfo.height}`}</p>
-                                    <br />
-                                    <p>
-                                        <b>Abilities:</b>{' '}
-                                    </p>
-                                    {pokemonInfo.abilities !== undefined ? (
-                                        pokemonInfo.abilities.map(
-                                            (ability, index) => (
-                                                <p key={index}>
-                                                    {ability.ability.name}
-                                                </p>
+                                <Box
+                                    component='section'
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        gap: 2,
+                                        '& button': {
+                                            m: 1,
+                                            fontSize: '0.6rem',
+                                        },
+                                    }}
+                                >
+                                    <div>
+                                        <Typography color='secondary'>
+                                            <b>{`Weight: ${pokemonInfo.weight}`}</b>
+                                        </Typography>
+                                        <Typography color='secondary'>
+                                            <b>{`Height: ${pokemonInfo.height}`}</b>
+                                        </Typography>
+                                        <br />
+                                        <Typography color='secondary'>
+                                            <b>Abilities:</b>{' '}
+                                        </Typography>
+                                        {pokemonInfo.abilities !== undefined ? (
+                                            pokemonInfo.abilities.map(
+                                                (ability, index) => (
+                                                    <Typography
+                                                        color='secondary'
+                                                        key={index}
+                                                    >
+                                                        {ability.ability.name}
+                                                    </Typography>
+                                                )
                                             )
-                                        )
-                                    ) : (
-                                        <p>No abilities</p>
-                                    )}
-                                </Typography>
+                                        ) : (
+                                            <Typography color='secondary'>
+                                                No abilities
+                                            </Typography>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <br />
+                                        <b>Stats:</b>
+                                        {pokemonInfo.stats !== undefined ? (
+                                            pokemonInfo.stats.map(
+                                                (stat, index) => (
+                                                    <Typography
+                                                        variant='body2'
+                                                        key={index}
+                                                        color='secondary'
+                                                    >
+                                                        <span>
+                                                            <em>
+                                                                {stat.stat.name}
+                                                            </em>
+                                                        </span>
+                                                        : {stat.base_stat}
+                                                    </Typography>
+                                                )
+                                            )
+                                        ) : (
+                                            <p>No abilities</p>
+                                        )}
+                                    </div>
+                                </Box>
                             </CardContent>
                         </CardActionArea>
                     </Card>

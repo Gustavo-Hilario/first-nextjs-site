@@ -1,6 +1,6 @@
 // With Suspense we can lazy load the component and show a loading content while the component is being loaded
-import { Suspense } from 'react';
-import Loading from './loading';
+// import { Suspense } from 'react';
+// import Loading from './loading';
 
 import Typography from '@mui/material/Typography';
 
@@ -27,9 +27,7 @@ export default function PokemonPage() {
             >
                 Pokemons
             </Typography>
-            <Suspense fallback={<Loading />}>
-                <Pokemon />
-            </Suspense>
+            <Pokemon />
         </div>
     );
 }
