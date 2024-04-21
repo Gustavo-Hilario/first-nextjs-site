@@ -19,6 +19,7 @@ import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRou
 
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import Grow from '@mui/material/Grow';
 
 const NUMBER_OF_POKEMON_AVATARS = 20;
 
@@ -123,21 +124,28 @@ export default function Pokemon() {
                 {allPokemons.map((pokemon, index) => {
                     if (randomPokemonIDs.includes(index)) {
                         return (
-                            <Avatar
-                                variant='circular'
+                            <Grow
+                                in={true}
                                 key={pokemon.name}
-                                alt={pokemon.name}
-                                src={pokemon.image}
-                                sx={{
-                                    width: 100,
-                                    height: 100,
-                                }}
-                                onClick={() =>
-                                    setSelectedPokemon({
-                                        name: pokemon.name,
-                                    })
-                                }
-                            />
+                                style={{ transformOrigin: '0 0 0' }}
+                                timeout={1000 + index * 10}
+                            >
+                                <Avatar
+                                    variant='circular'
+                                    key={pokemon.name}
+                                    alt={pokemon.name}
+                                    src={pokemon.image}
+                                    sx={{
+                                        width: 100,
+                                        height: 100,
+                                    }}
+                                    onClick={() =>
+                                        setSelectedPokemon({
+                                            name: pokemon.name,
+                                        })
+                                    }
+                                />
+                            </Grow>
                         );
                     }
                 })}
@@ -299,22 +307,6 @@ export default function Pokemon() {
                     </Grid>
                 </Grid>
             </Box>
-            <Box
-                component='section'
-                display={{ sm: 'flex' }}
-                alignItems='center'
-                justifyContent='center'
-                gap={2}
-                sx={{
-                    display: {
-                        sm: 'flex',
-                    },
-                    justifyContent: 'center',
-                    gap: 2,
-                    textAlign: 'center',
-                    m: 2,
-                }}
-            ></Box>
             <PokemonDetail
                 pokemonInfo={pokemonInfo}
                 selectedPokemon={selectedPokemon}

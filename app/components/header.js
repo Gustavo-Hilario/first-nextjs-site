@@ -26,13 +26,13 @@ import LogoDevIcon from '@mui/icons-material/LogoDev';
 const pages = [
     { title: 'Home', path: '/' },
     { title: 'Pokemon', path: '/pokemon' },
+    { title: 'Portfolio', path: '/portfolio' },
     { title: 'Signup', path: '/signup' },
 ];
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 export default function Header() {
-    const [myLinks, setMyLinks] = useState({});
     const pathname = usePathname();
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -121,7 +121,11 @@ export default function Header() {
                                     onClick={handleCloseNavMenu}
                                 >
                                     <Link
-                                        className={`${pathname} === page.path ? 'active-link' : ""`}
+                                        className={
+                                            pathname === page.path
+                                                ? 'active-link'
+                                                : ''
+                                        }
                                         href={page.path}
                                     >
                                         <Typography textAlign='center'>
@@ -162,21 +166,31 @@ export default function Header() {
                         sx={{
                             flexGrow: 1,
                             display: { xs: 'none', md: 'flex' },
+                            '& a.active-link': {
+                                fontWeight: 900,
+                            },
                         }}
                     >
                         {pages.map((page) => (
-                            <Button
+                            <Link
                                 key={page.title}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
+                                className={
+                                    pathname === page.path ? 'active-link' : ''
+                                }
+                                href={page.path}
                             >
-                                <Link
-                                    className={`${pathname} === page.path ? 'active-link' : ""`}
-                                    href={page.path}
+                                <Button
+                                    onClick={handleCloseNavMenu}
+                                    sx={{
+                                        my: 2,
+                                        color: 'white',
+                                        display: 'block',
+                                        fontWeight: 'inherit',
+                                    }}
                                 >
                                     {page.title}
-                                </Link>
-                            </Button>
+                                </Button>
+                            </Link>
                         ))}
                     </Box>
 
