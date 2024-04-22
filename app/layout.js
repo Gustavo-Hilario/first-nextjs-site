@@ -1,5 +1,7 @@
 import '../src/styles/globals.css';
 
+import { UserProvider } from '@auth0/nextjs-auth0/client';
+
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,14 +16,16 @@ export const metadata = {
 export default function RootLayout({ children }) {
     return (
         <html lang='en'>
-            <body className='my-first-nextjs-site'>
-                <AppRouterCacheProvider>
-                    <ThemeProvider theme={theme}>
-                        <CssBaseline />
-                        {children}
-                    </ThemeProvider>
-                </AppRouterCacheProvider>
-            </body>
+            <UserProvider>
+                <body className='my-first-nextjs-site'>
+                    <AppRouterCacheProvider>
+                        <ThemeProvider theme={theme}>
+                            <CssBaseline />
+                            {children}
+                        </ThemeProvider>
+                    </AppRouterCacheProvider>
+                </body>
+            </UserProvider>
         </html>
     );
 }

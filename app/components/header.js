@@ -2,9 +2,10 @@
 // Otherwise, it will throw an error.
 'use client';
 
+import { useUser } from '@auth0/nextjs-auth0/client';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
 
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
@@ -19,20 +20,35 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
+
 import LogoDevIcon from '@mui/icons-material/LogoDev';
+import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 
 // const pages = ['Products', 'Pricing', 'Blog'];
 
-const pages = [
+const mainMenuPages = [
     { title: 'Home', path: '/' },
     { title: 'Pokemon', path: '/pokemon' },
     { title: 'Portfolio', path: '/portfolio' },
     { title: 'Signup', path: '/signup' },
 ];
 
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const accountPages = [
+    { title: 'Login', path: '/api/auth/login' },
+    { title: 'Signup', path: '/pokemon' },
+];
+
+const settings = [
+    { title: 'Profile', path: '/' },
+    { title: 'Account', path: '/' },
+    { title: 'Dashboard', path: '/' },
+    { title: 'Logout', path: '/api/auth/logout' },
+];
 
 export default function Header() {
+    const { user, error, isLoading } = useUser();
+    console.log(user, error, isLoading);
     const pathname = usePathname();
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -115,7 +131,7 @@ export default function Header() {
                                 display: { xs: 'block', md: 'none' },
                             }}
                         >
-                            {pages.map((page) => (
+                            {mainMenuPages.map((page) => (
                                 <MenuItem
                                     key={page.title}
                                     onClick={handleCloseNavMenu}
@@ -171,7 +187,7 @@ export default function Header() {
                             },
                         }}
                     >
-                        {pages.map((page) => (
+                        {mainMenuPages.map((page) => (
                             <Link
                                 key={page.title}
                                 className={
@@ -194,46 +210,80 @@ export default function Header() {
                         ))}
                     </Box>
 
-                    <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title='Open settings'>
-                            <IconButton
-                                onClick={handleOpenUserMenu}
-                                sx={{ p: 0 }}
-                            >
-                                <Avatar
-                                    alt='Gustavo Hilario'
-                                    src='/static/images/avatar/2.jpg'
-                                />
-                            </IconButton>
-                        </Tooltip>
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id='menu-appbar'
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            {settings.map((setting) => (
-                                <MenuItem
-                                    key={setting}
-                                    onClick={handleCloseUserMenu}
+                    {
+                        // Logged in User
+                        (user && (
+                            <Box sx={{ flexGrow: 0 }}>
+                                <Tooltip title='Open settings'>
+                                    <IconButton
+                                        onClick={handleOpenUserMenu}
+                                        sx={{ p: 0 }}
+                                    >
+                                        <Avatar
+                                            alt='header-profile-avatar'
+                                            src={user.picture}
+                                        />
+                                    </IconButton>
+                                </Tooltip>
+                                <Menu
+                                    sx={{ mt: '45px' }}
+                                    id='menu-appbar'
+                                    anchorEl={anchorElUser}
+                                    anchorOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                    keepMounted
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                    open={Boolean(anchorElUser)}
+                                    onClose={handleCloseUserMenu}
                                 >
-                                    <Typography textAlign='center'>
-                                        {setting}
-                                    </Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Box>
+                                    {settings.map((setting) => (
+                                        <Link
+                                            key={setting.title}
+                                            href={setting.path}
+                                        >
+                                            <MenuItem
+                                                onClick={handleCloseUserMenu}
+                                            >
+                                                {setting.title === 'Logout' ? (
+                                                    <div
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems:
+                                                                'center',
+                                                        }}
+                                                    >
+                                                        <LogoutRoundedIcon />
+                                                        <Typography textAlign='center'>
+                                                            {setting.title}
+                                                        </Typography>
+                                                    </div>
+                                                ) : (
+                                                    <Typography textAlign='center'>
+                                                        {setting.title}
+                                                    </Typography>
+                                                )}
+                                            </MenuItem>
+                                        </Link>
+                                    ))}
+                                </Menu>
+                            </Box>
+                        )) || (
+                            // Not Logged in User
+                            <Box sx={{ flexGrow: 0 }}>
+                                <Link href='/api/auth/login'>
+                                    <Button color='inherit'>
+                                        <LoginRoundedIcon />
+                                        Login
+                                    </Button>
+                                </Link>
+                            </Box>
+                        )
+                    }
                 </Toolbar>
             </Container>
         </AppBar>
