@@ -5,5 +5,5 @@ import { getSession } from '@auth0/nextjs-auth0';
 export default async function DashboardLayout({ children }) {
     const session = await getSession();
 
-    return <>{session?.user && <p>Hi there!</p>}</>;
+    return <>{session?.user && <>{children}</>}</>;
 }

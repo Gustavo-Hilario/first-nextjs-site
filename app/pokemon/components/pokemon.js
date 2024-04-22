@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-import { getAllPokemons, getPokemonDetail } from '../../lb/data/pokemonAPI';
+import { getAllPokemons, getPokemonDetail } from '../../lib/data/pokemonAPI';
 import PokemonDetail from './pokemonDetail';
 
 import Autocomplete from '@mui/material/Autocomplete';
@@ -254,7 +254,7 @@ export default function Pokemon() {
                                 <TextField {...params} label='Pokemon' />
                             )}
                             onChange={(event, value) => {
-                                console.log(event);
+                                // console.log(event);
                                 if (value !== null) {
                                     setSelectedPokemon({ name: value });
                                     return;

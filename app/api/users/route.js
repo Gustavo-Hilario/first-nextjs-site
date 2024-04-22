@@ -1,5 +1,5 @@
 // pages/api/users.js
-import clientPromise from '../../lb/mongodb';
+import clientPromise from '../../lib/mongodb';
 
 export async function POST(Request) {
     try {
