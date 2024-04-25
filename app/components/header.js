@@ -46,8 +46,6 @@ const settings = [
     { title: 'Logout', path: '/api/auth/logout' },
 ];
 
-import UserForm from './userForm';
-
 export default function Header() {
     const { user, error, isLoading } = useUser();
     const pathname = usePathname();
@@ -300,7 +298,6 @@ export default function Header() {
                     </Toolbar>
                 </Container>
             </AppBar>
-            <UserForm />
         </>
     );
 }

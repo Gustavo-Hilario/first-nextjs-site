@@ -14,6 +14,8 @@ const theme = createTheme({
         background: {
             default: '#0d0016',
             paper: '#060112',
+            dashnav: '#190648',
+            dashcontent: '#26105D',
         },
         text: {
             primary: '#edd6f9',
