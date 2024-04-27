@@ -31,6 +31,7 @@ const mainMenuPages = [
     { title: 'Home', path: '/' },
     { title: 'Pokemon', path: '/pokemon' },
     { title: 'Portfolio', path: '/portfolio' },
+    { title: 'WordPress.com', path: '/wordpress' },
     { title: 'Signup', path: '/signup' },
 ];
 
@@ -234,7 +235,12 @@ export default function Header() {
                                         </IconButton>
                                     </Tooltip>
                                     <Menu
-                                        sx={{ mt: '45px' }}
+                                        sx={{
+                                            mt: '45px',
+                                            '& a.active-link p': {
+                                                fontWeight: 900,
+                                            },
+                                        }}
                                         id='menu-appbar'
                                         anchorEl={anchorElUser}
                                         anchorOrigin={{
@@ -253,6 +259,11 @@ export default function Header() {
                                             <Link
                                                 key={setting.title}
                                                 href={setting.path}
+                                                className={
+                                                    pathname === setting.path
+                                                        ? 'active-link'
+                                                        : ''
+                                                }
                                             >
                                                 <MenuItem
                                                     onClick={
