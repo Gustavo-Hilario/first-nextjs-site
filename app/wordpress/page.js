@@ -2,9 +2,11 @@ import { cookies } from 'next/headers';
 
 import Header from '../components/header';
 
+import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-
+import Fab from '@mui/material/Fab';
+import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import Link from 'next/link';
 
 import WordPressAllSitesPanel from './components/wordpressAllSitesPanel';
@@ -50,53 +52,69 @@ export default async function WordPressComPage() {
             )}
 
             {wordpressComToken && (
-                <Grid
-                    container
+                <Container
+                    maxWidth={'lg'}
                     sx={{
-                        flexWrap: 'nowrap',
-                        gap: 1,
+                        mt: 0,
+                        pt: 2,
                     }}
                 >
                     <Grid
-                        item
-                        sm={12}
-                        md={8}
-                        sx={{
-                            minHeight: { md: 'calc(100vh - 100px)' },
-                            m: 2,
-                            p: 2,
-                            backgroundColor: 'background.dashnav',
-                            boxShadow: 3,
-                            borderRadius: 3,
-                        }}
+                        container
+                        spacing={2}
+                        rowSpacing={3}
+                        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                        sx={{ mt: 0 }}
                     >
-                        {
-                            // Pass the sites to the WordPressSitesPanel component
-                            wordPressComSites && (
-                                <WordPressAllSitesPanel
-                                    sites={wordPressComSites}
-                                />
-                            )
-                        }
-                    </Grid>
+                        <Grid
+                            item
+                            sm={12}
+                            md={8}
+                            sx={{
+                                px: 2,
+                                backgroundColor: 'background.dashnav',
+                                boxShadow: 3,
+                                borderRadius: 3,
+                            }}
+                        >
+                            {
+                                // Pass the sites to the WordPressSitesPanel component
+                                wordPressComSites && (
+                                    <WordPressAllSitesPanel
+                                        sites={wordPressComSites}
+                                    />
+                                )
+                            }
+                        </Grid>
 
-                    <Grid
-                        item
-                        sm={12}
-                        md={4}
+                        <Grid
+                            item
+                            sm={12}
+                            md={4}
+                            sx={{
+                                px: 2,
+                                backgroundColor: 'background.dashcontent',
+                                boxShadow: 3,
+                                borderRadius: 3,
+                            }}
+                        >
+                            WordPress.com Sidebar
+                            <WordPressSingleSitePanel />
+                        </Grid>
+                    </Grid>
+                    {/* Create a floating button to scroll to top or bottom */}
+                    <Fab
+                        color='primary'
+                        aria-label='add'
                         sx={{
-                            minHeight: { md: 'calc(100vh - 100px)' },
-                            m: 2,
-                            p: 2,
-                            backgroundColor: 'background.dashcontent',
-                            boxShadow: 3,
-                            borderRadius: 3,
+                            position: 'fixed',
+                            bottom: 16,
+                            right: 16,
                         }}
                     >
-                        WordPress.com Sidebar
-                        <WordPressSingleSitePanel />
-                    </Grid>
-                </Grid>
+                        <KeyboardArrowDownRoundedIcon />
+                    </Fab>
+                </Container>
             )}
         </>
     );

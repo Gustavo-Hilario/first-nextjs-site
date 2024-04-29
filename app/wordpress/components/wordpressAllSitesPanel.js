@@ -8,7 +8,6 @@ import Avatar from '@mui/material/Avatar';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import Fade from '@mui/material/Fade';
 
@@ -30,127 +29,164 @@ export default function WordPressAllSitesPanel({ sites }) {
 
     return (
         <>
-            <Grid container>
-                <h2>WordPress Sites Panel Component</h2>
-                {dotComSites.sites.map((site, index) => {
-                    console.log(site);
-                    return (
-                        <>
-                            {index < numberSitesLoading && (
-                                <Accordion
-                                    key={site.ID}
-                                    id={site.ID}
-                                    expanded={
-                                        expandedItem === site.ID ? true : false
-                                    }
-                                    onChange={() => handleExpansion(site.ID)}
-                                    slots={{ transition: Fade }}
-                                    slotProps={{
-                                        transition: { timeout: 400 },
-                                    }}
+            {dotComSites.sites.length > numberSitesLoading && (
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        textAlign: 'center',
+                        width: '100%',
+                        my: 2,
+                    }}
+                >
+                    <h2>Your WordPress.com Sites</h2>
+                    <Button
+                        size='small'
+                        variant='bggradient'
+                        color='secondary'
+                        onClick={() =>
+                            setNumberSitesLoading(numberSitesLoading + 50)
+                        }
+                    >
+                        Load More Sites
+                    </Button>
+                </Box>
+            )}
+            {dotComSites.sites.map((site, index) => {
+                // console.log(site);
+                return (
+                    <>
+                        {index < numberSitesLoading && (
+                            <Accordion
+                                key={site.ID}
+                                id={site.ID}
+                                expanded={
+                                    expandedItem === site.ID ? true : false
+                                }
+                                onChange={() => handleExpansion(site.ID)}
+                                slots={{ transition: Fade }}
+                                slotProps={{
+                                    transition: { timeout: 400 },
+                                }}
+                                sx={{
+                                    width: '100%',
+                                    '& .MuiAccordion-region': {
+                                        height:
+                                            expandedItem === site.ID
+                                                ? 'auto'
+                                                : 0,
+                                    },
+                                    '& .MuiAccordionDetails-root': {
+                                        display:
+                                            expandedItem === site.ID
+                                                ? 'block'
+                                                : 'none',
+                                    },
+                                }}
+                            >
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls={`panel${site.ID}-content`}
+                                    id={`panel${site.ID}-header`}
                                     sx={{
-                                        width: '100%',
-                                        '& .MuiAccordion-region': {
-                                            height:
-                                                expandedItem === site.ID
-                                                    ? 'auto'
-                                                    : 0,
-                                        },
-                                        '& .MuiAccordionDetails-root': {
-                                            display:
-                                                expandedItem === site.ID
-                                                    ? 'block'
-                                                    : 'none',
+                                        alignItems: 'center',
+                                        '& .MuiAccordionSummary-content': {
+                                            alignItems: 'center',
+                                            gap: 2,
                                         },
                                     }}
                                 >
-                                    <AccordionSummary
-                                        expandIcon={<ExpandMoreIcon />}
-                                        aria-controls={`panel${site.ID}-content`}
-                                        id={`panel${site.ID}-header`}
+                                    <Avatar
+                                        alt={site.name}
+                                        src={
+                                            site.icon
+                                                ? site.icon.img
+                                                : site.logo.url
+                                                ? site.logo.url
+                                                : '/a8cLogo.png'
+                                        }
+                                    />
+                                    <Box
                                         sx={{
-                                            alignItems: 'center',
-                                            '& .MuiAccordionSummary-content': {
-                                                alignItems: 'center',
-                                                gap: 2,
+                                            display: 'flex',
+                                            flexBasis: '100%',
+                                            '& a': {
+                                                borderBottom:
+                                                    '1px solid #a45800',
+                                            },
+                                            '& a:hover': {
+                                                borderBottom:
+                                                    '2px solid #a45800',
+                                            },
+                                            '& a:hover .MuiTypography-root': {
+                                                fontWeight: '900',
                                             },
                                         }}
                                     >
-                                        <Avatar
-                                            alt={site.name}
-                                            src={
-                                                site.icon
-                                                    ? site.icon.img
-                                                    : site.logo.url
-                                                    ? site.logo.url
-                                                    : '/a8cLogo.png'
-                                            }
-                                        />
-
-                                        <Link href={site.URL}>
+                                        <a
+                                            href={site.URL}
+                                            target='_blank'
+                                            // LEARN: GET styles from theme and pass them to regular HTML elements -- color="secondary"·
+                                        >
                                             <Typography
                                                 sx={{
-                                                    fontWeight: 'bold',
                                                     fontStyle: 'italic',
                                                 }}
                                             >
                                                 {site.name}
                                             </Typography>
-                                        </Link>
+                                        </a>
+                                    </Box>
 
-                                        <Badge
-                                            badgeContent={
-                                                site.subscribers_count
-                                            }
-                                            color='secondary'
-                                            anchorOrigin={{
-                                                vertical: 'top',
-                                                horizontal: 'right',
-                                            }}
-                                            max={999}
-                                            sx={{
-                                                '& .MuiBadge-badge': {
-                                                    p: 0,
-                                                    top: '-5px',
-                                                    right: '-2px',
-                                                },
-                                            }}
-                                            showZero
-                                        >
-                                            <PeopleAltRoundedIcon />
-                                        </Badge>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <Typography>
-                                            {site.description}
-                                        </Typography>
-                                    </AccordionDetails>
-                                </Accordion>
-                            )}
-                        </>
-                    );
-                })}
-                {dotComSites.sites.length > numberSitesLoading && (
-                    <Box
-                        sx={{
-                            textAlign: 'center',
-                            width: '100%',
-                            my: 2,
-                        }}
+                                    <Badge
+                                        badgeContent={site.subscribers_count}
+                                        color='secondary'
+                                        anchorOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'right',
+                                        }}
+                                        max={999}
+                                        sx={{
+                                            mr: '30px',
+                                            '& .MuiBadge-badge': {
+                                                p: 0,
+                                                top: '-5px',
+                                                right: '-2px',
+                                            },
+                                        }}
+                                        showZero
+                                    >
+                                        <PeopleAltRoundedIcon />
+                                    </Badge>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Typography>{site.description}</Typography>
+                                </AccordionDetails>
+                            </Accordion>
+                        )}
+                    </>
+                );
+            })}
+            {dotComSites.sites.length > numberSitesLoading && (
+                <Box
+                    sx={{
+                        textAlign: 'center',
+                        width: '100%',
+                        my: 2,
+                    }}
+                >
+                    <Button
+                        size='small'
+                        variant='bggradient'
+                        color='secondary'
+                        onClick={() =>
+                            setNumberSitesLoading(numberSitesLoading + 50)
+                        }
                     >
-                        <Button
-                            size='small'
-                            variant='bggradient'
-                            color='secondary'
-                            onClick={() =>
-                                setNumberSitesLoading(numberSitesLoading + 50)
-                            }
-                        >
-                            Load More Sites
-                        </Button>
-                    </Box>
-                )}
-            </Grid>
+                        Load More Sites
+                    </Button>
+                </Box>
+            )}
         </>
     );
 }
