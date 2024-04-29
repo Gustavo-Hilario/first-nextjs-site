@@ -7,6 +7,9 @@ import Button from '@mui/material/Button';
 
 import Link from 'next/link';
 
+import WordPressAllSitesPanel from './components/wordpressAllSitesPanel';
+import WordPressSingleSitePanel from './components/wordpressSingleSitePanel';
+
 const wordPressComBaseUrl = 'https://public-api.wordpress.com/rest/v1.1';
 
 async function fetchWordPressComSites(token) {
@@ -30,11 +33,7 @@ export default async function WordPressComPage() {
     const cookieStore = cookies();
     const wordpressComToken = cookieStore.get('wordpresscom_token').value;
 
-    const sites = await fetchWordPressComSites(wordpressComToken);
-
-    const siteTitles = sites.sites.map((site) => site.name);
-
-    console.log(siteTitles);
+    const wordPressComSites = await fetchWordPressComSites(wordpressComToken);
 
     return (
         <>
@@ -71,18 +70,14 @@ export default async function WordPressComPage() {
                             borderRadius: 3,
                         }}
                     >
-                        <div>
-                            <h2>
-                                Hello there! This will be a WordPress.com page
-                            </h2>
-                            {sites &&
-                                sites.sites.map((site) => (
-                                    <div key={site.ID}>
-                                        <h3>{site.name}</h3>
-                                        <p>{site.URL}</p>
-                                    </div>
-                                ))}
-                        </div>
+                        {
+                            // Pass the sites to the WordPressSitesPanel component
+                            wordPressComSites && (
+                                <WordPressAllSitesPanel
+                                    sites={wordPressComSites}
+                                />
+                            )
+                        }
                     </Grid>
 
                     <Grid
@@ -99,6 +94,7 @@ export default async function WordPressComPage() {
                         }}
                     >
                         WordPress.com Sidebar
+                        <WordPressSingleSitePanel />
                     </Grid>
                 </Grid>
             )}
