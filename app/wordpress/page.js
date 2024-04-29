@@ -7,10 +7,34 @@ import Button from '@mui/material/Button';
 
 import Link from 'next/link';
 
-export default function WordPressComPage() {
+const wordPressComBaseUrl = 'https://public-api.wordpress.com/rest/v1.1';
+
+async function fetchWordPressComSites(token) {
+    const response = await fetch(`${wordPressComBaseUrl}/me/sites`, {
+        method: 'GET',
+        site_visibility: 'visible',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (response.ok) {
+        return await response.json();
+    } else {
+        throw new Error(`Failed to fetch sites: ${response.statusText}`);
+    }
+}
+
+export default async function WordPressComPage() {
     // LEARN More about NextJS cookies and how cookies work in general
     const cookieStore = cookies();
-    const wordpressComToken = cookieStore.get('wordpresscom_token');
+    const wordpressComToken = cookieStore.get('wordpresscom_token').value;
+
+    const sites = await fetchWordPressComSites(wordpressComToken);
+
+    const siteTitles = sites.sites.map((site) => site.name);
+
+    console.log(siteTitles);
 
     return (
         <>
@@ -51,11 +75,13 @@ export default function WordPressComPage() {
                             <h2>
                                 Hello there! This will be a WordPress.com page
                             </h2>
-                            <p>
-                                This is a WordPress.com page. It will contain a
-                                list of my WordPress.com blog posts and other
-                                items from the WordPress.com REST API.
-                            </p>
+                            {sites &&
+                                sites.sites.map((site) => (
+                                    <div key={site.ID}>
+                                        <h3>{site.name}</h3>
+                                        <p>{site.URL}</p>
+                                    </div>
+                                ))}
                         </div>
                     </Grid>
 
