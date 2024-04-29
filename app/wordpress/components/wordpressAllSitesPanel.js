@@ -14,12 +14,14 @@ import Fade from '@mui/material/Fade';
 import Badge from '@mui/material/Badge';
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-export default function WordPressAllSitesPanel({ sites }) {
+export default function WordPressAllSitesPanel({
+    wordPressComSites,
+    expandedItem,
+    setExpandedItem,
+}) {
     const [numberSitesLoading, setNumberSitesLoading] = useState(20);
-    const [dotComSites, setDotComSites] = useState(sites);
-    const [expandedItem, setExpandedItem] = useState(null);
 
     const handleExpansion = (siteID) => {
         expandedItem === siteID
@@ -29,7 +31,7 @@ export default function WordPressAllSitesPanel({ sites }) {
 
     return (
         <>
-            {dotComSites.sites.length > numberSitesLoading && (
+            {wordPressComSites.sites.length > numberSitesLoading && (
                 <Box
                     sx={{
                         display: 'flex',
@@ -52,7 +54,7 @@ export default function WordPressAllSitesPanel({ sites }) {
                     </Button>
                 </Box>
             )}
-            {dotComSites.sites.map((site, index) => {
+            {wordPressComSites.sites.map((site, index) => {
                 // console.log(site);
                 return (
                     <>
@@ -167,7 +169,7 @@ export default function WordPressAllSitesPanel({ sites }) {
                     </>
                 );
             })}
-            {dotComSites.sites.length > numberSitesLoading && (
+            {wordPressComSites.sites.length > numberSitesLoading && (
                 <Box
                     sx={{
                         textAlign: 'center',
