@@ -11,19 +11,19 @@ import WordPressSingleSitePanel from './wordpressSingleSitePanel';
 export default function WordPressSitesContainer({ wordPressComSites }) {
     // const [wordPressComSites, setWordPressComSites] = useState(sites);
     const [expandedItem, setExpandedItem] = useState(null);
-    const [selectedSite, setSelectedSite] = useState(null);
+    const [selectedSiteInfo, setSelectedSiteInfo] = useState(null);
 
     useEffect(() => {
         const currentSite = wordPressComSites.sites.find((site) => {
             return site.ID === expandedItem;
         });
 
-        setSelectedSite(currentSite);
+        setSelectedSiteInfo(currentSite);
     }, [expandedItem]);
 
     return (
         <Container
-            maxWidth={'lg'}
+            maxWidth={'xl'}
             sx={{
                 mt: 0,
                 pt: 2,
@@ -70,7 +70,7 @@ export default function WordPressSitesContainer({ wordPressComSites }) {
                         borderRadius: 3,
                     }}
                 >
-                    <WordPressSingleSitePanel site={selectedSite} />
+                    <WordPressSingleSitePanel site={selectedSiteInfo} />
                 </Grid>
             </Grid>
             {/* Create a floating button to scroll to top or bottom */}

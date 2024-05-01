@@ -236,10 +236,6 @@ export default function Pokemon() {
                                     ? selectedPokemon.name
                                     : 'Pikachu'
                             }
-                            // isOptionEqualToValue={(option, value) => {
-                            //     console.log(typeof option, typeof value);
-                            //     option === value;
-                            // }}
                             sx={{
                                 width: {
                                     xs: '100%',
@@ -254,7 +250,6 @@ export default function Pokemon() {
                                 <TextField {...params} label='Pokemon' />
                             )}
                             onChange={(event, value) => {
-                                // console.log(event);
                                 if (value !== null) {
                                     setSelectedPokemon({ name: value });
                                     return;

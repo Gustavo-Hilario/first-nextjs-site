@@ -8,8 +8,6 @@ export default async function DashboardLayout({ children }) {
     // This is provided by auth0
     const session = await getSession();
 
-    console.log(session?.user);
-
     return (
         <>
             {session?.user && (

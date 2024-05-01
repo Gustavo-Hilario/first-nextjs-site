@@ -15,7 +15,6 @@ function UserForm() {
         });
 
         const data = await response.json();
-        console.log(data);
         if (response.ok) {
             alert('User added successfully!');
         } else {

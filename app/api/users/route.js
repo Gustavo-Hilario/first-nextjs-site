@@ -12,7 +12,6 @@ export async function POST(Request) {
             email: email,
         });
 
-        console.log(person);
         await person.save();
 
         // // Connect to the database

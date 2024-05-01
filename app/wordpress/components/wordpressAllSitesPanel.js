@@ -55,7 +55,6 @@ export default function WordPressAllSitesPanel({
                 </Box>
             )}
             {wordPressComSites.sites.map((site, index) => {
-                // console.log(site);
                 return (
                     <>
                         {index < numberSitesLoading && (
