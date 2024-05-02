@@ -1,13 +1,23 @@
-import { useState, useEffect } from 'react';
-import { Avatar, Box, Button } from '@mui/material';
+import { useState, useEffect, useRef } from 'react';
+import {
+    Avatar,
+    Box,
+    Button,
+    Typography,
+    TablePagination,
+} from '@mui/material';
 import Link from 'next/link';
 
 import fetchingSitePosts from '../../api/wordpress/route';
+import { set } from 'mongoose';
 
 // Function to fetch posts from a WordPress.com site
 const fetchWordPressComSitePosts = async (
     siteID,
     setSitePosts,
+    postPage,
+    rowsPerPage,
+    setPostPage,
     setLoadingSitePosts
 ) => {
     if (!siteID) return alert('No site ID provided');
@@ -15,12 +25,16 @@ const fetchWordPressComSitePosts = async (
     setLoadingSitePosts(true);
 
     try {
-        const response = await fetch(`/api/wordpress/sites/${siteID}/posts`, {
-            method: 'POST',
-        });
+        const response = await fetch(
+            `/api/wordpress/sites/${siteID}/posts/?number=${rowsPerPage}&page=${postPage}`,
+            {
+                method: 'POST',
+            }
+        );
 
         if (response.ok) {
             setLoadingSitePosts(false);
+            // setPostPage(postPage + 1);
             const data = await response.json();
             return setSitePosts(data);
         }
@@ -33,18 +47,47 @@ const fetchWordPressComSitePosts = async (
 export default function WordPressSingleSitePanel({ site }) {
     const [sitePosts, setSitePosts] = useState({});
     const [loadingSitePosts, setLoadingSitePosts] = useState(false);
-    // Show a message if no site is selected
+
+    // Each fetch request will return 20 posts per page
+    // const [numberOfPostsDisplayed, setNumberOfPostsDisplayed] = useState(20);
+    const [postPage, setPostPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
     useEffect(() => {
         setSitePosts({});
-        // fetchWordPressComSitePosts(site.ID, setSitePosts);
+        setPostPage(1);
+        setRowsPerPage(10);
     }, [site]);
 
+    useEffect(() => {
+        fetchWordPressComSitePosts(
+            site.ID,
+            setSitePosts,
+            postPage,
+            rowsPerPage,
+            setPostPage,
+            setLoadingSitePosts
+        );
+    }, [postPage, rowsPerPage]);
+
+    // Show a message if no site is selected
     if (!site) {
         return <Box>Select a site to see more information ...</Box>;
     }
 
+    // Handling Pagination Component Logic
+    const handleChangePage = (event, newPage) => {
+        setPostPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPostPage(1);
+    };
+
     console.log(sitePosts);
+    console.log(postPage);
+    console.log(rowsPerPage);
 
     return (
         <Box>
@@ -92,6 +135,7 @@ export default function WordPressSingleSitePanel({ site }) {
                     : `${Math.floor(site.quota.space_used / 1000000000)} GB`}
             </p>
             <p>{`Total Posts: ${site.post_count}`}</p>
+
             <Box
                 sx={{
                     display: 'flex',
@@ -105,9 +149,13 @@ export default function WordPressSingleSitePanel({ site }) {
                     variant='bggradient'
                     color='secondary'
                     onClick={() =>
+                        setPostPage(postPage + 1) &&
                         fetchWordPressComSitePosts(
                             site.ID,
                             setSitePosts,
+                            postPage,
+                            rowsPerPage,
+                            setPostPage,
                             setLoadingSitePosts
                         )
                     }
@@ -117,17 +165,31 @@ export default function WordPressSingleSitePanel({ site }) {
             </Box>
 
             {sitePosts.found && (
+                <TablePagination
+                    component='div'
+                    count={sitePosts.found}
+                    page={postPage}
+                    onPageChange={handleChangePage}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            )}
+
+            {(sitePosts.found && (
                 <Box>
                     <h3>Posts</h3>
                     {sitePosts.posts.map((post) => (
                         <Box key={post.ID}>
                             <a href={post.URL} target='_blank'>
-                                <h4>{post.title}</h4>
+                                <Typography>
+                                    <h4>{post.title}</h4>
+                                </Typography>
                             </a>
                         </Box>
                     ))}
                 </Box>
-            )}
+            )) ||
+                'No posts found'}
         </Box>
     );
 }

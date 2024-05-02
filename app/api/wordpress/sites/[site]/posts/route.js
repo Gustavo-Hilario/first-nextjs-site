@@ -4,6 +4,10 @@ import { cookies } from 'next/headers';
 
 export async function POST(request, { params }) {
     const site = params.site;
+    const searchParams = request.nextUrl.searchParams;
+    const page = searchParams.get('page');
+    const number = searchParams.get('number');
+    console.log(page);
     const wordpressComToken = cookies().get('wordpresscom_token')?.value;
 
     if (!wordpressComToken) {
@@ -13,7 +17,7 @@ export async function POST(request, { params }) {
     }
 
     const response = await fetch(
-        `https://public-api.wordpress.com/rest/v1.1/sites/${site}/posts/`,
+        `https://public-api.wordpress.com/rest/v1.1/sites/${site}/posts/?number=${number}&page=${page}`,
         {
             method: 'GET',
             headers: {
