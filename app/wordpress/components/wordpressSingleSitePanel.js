@@ -1,23 +1,34 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+const he = require('he');
+
 import {
     Avatar,
     Box,
     Button,
     Typography,
     TablePagination,
+    Card,
+    CardContent,
+    CardActions,
 } from '@mui/material';
-import Link from 'next/link';
 
-import fetchingSitePosts from '../../api/wordpress/route';
-import { set } from 'mongoose';
-
+const postDateOptions = {
+    // weekday: 'long',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+    // second: '2-digit',
+    timeZoneName: 'short',
+};
 // Function to fetch posts from a WordPress.com site
 const fetchWordPressComSitePosts = async (
     siteID,
     setSitePosts,
     postPage,
     rowsPerPage,
-    setPostPage,
     setLoadingSitePosts
 ) => {
     if (!siteID) return alert('No site ID provided');
@@ -25,8 +36,11 @@ const fetchWordPressComSitePosts = async (
     setLoadingSitePosts(true);
 
     try {
+        // Pagination component starts at 0, but the API starts at 1
         const response = await fetch(
-            `/api/wordpress/sites/${siteID}/posts/?number=${rowsPerPage}&page=${postPage}`,
+            `/api/wordpress/sites/${siteID}/posts/?number=${rowsPerPage}&page=${
+                postPage + 1
+            }`,
             {
                 method: 'POST',
             }
@@ -34,7 +48,6 @@ const fetchWordPressComSitePosts = async (
 
         if (response.ok) {
             setLoadingSitePosts(false);
-            // setPostPage(postPage + 1);
             const data = await response.json();
             return setSitePosts(data);
         }
@@ -47,28 +60,48 @@ const fetchWordPressComSitePosts = async (
 export default function WordPressSingleSitePanel({ site }) {
     const [sitePosts, setSitePosts] = useState({});
     const [loadingSitePosts, setLoadingSitePosts] = useState(false);
+    const [fecthPostButtonClicked, setFetchPostButtonClicked] = useState(false);
 
-    // Each fetch request will return 20 posts per page
-    // const [numberOfPostsDisplayed, setNumberOfPostsDisplayed] = useState(20);
-    const [postPage, setPostPage] = useState(1);
+    // Each fetch request will return 10 posts per page
+    const [postPage, setPostPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
+    // Reset the state when a new site is selected
     useEffect(() => {
-        setSitePosts({});
-        setPostPage(1);
-        setRowsPerPage(10);
-    }, [site]);
+        if (site === null || site === undefined) return;
 
-    useEffect(() => {
+        setSitePosts({});
+        setPostPage(0);
+        setRowsPerPage(10);
         fetchWordPressComSitePosts(
             site.ID,
             setSitePosts,
-            postPage,
-            rowsPerPage,
-            setPostPage,
+            0,
+            10,
             setLoadingSitePosts
         );
-    }, [postPage, rowsPerPage]);
+    }, [site]);
+
+    // Fetch posts when the site is selected
+    useEffect(() => {
+        let newPage;
+        if (site === null || site === undefined) return;
+
+        if (fecthPostButtonClicked === true) {
+            newPage = postPage + 1;
+            setPostPage(newPage);
+        }
+
+        fetchWordPressComSitePosts(
+            site.ID,
+            setSitePosts,
+            newPage ? newPage : postPage,
+            rowsPerPage,
+            setLoadingSitePosts
+        );
+
+        setFetchPostButtonClicked(false);
+    }, [postPage, rowsPerPage, fecthPostButtonClicked]);
 
     // Show a message if no site is selected
     if (!site) {
@@ -82,12 +115,15 @@ export default function WordPressSingleSitePanel({ site }) {
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPostPage(1);
+        setPostPage(0);
     };
 
-    console.log(sitePosts);
-    console.log(postPage);
-    console.log(rowsPerPage);
+    // Learn – Why component is reloaded multiple times
+    console.log('Component Reloaded');
+
+    // console.log('Posts: ', sitePosts);
+    // console.log('postPage: ', postPage);
+    // console.log('rowsPerPage: ', rowsPerPage);
 
     return (
         <Box>
@@ -148,17 +184,7 @@ export default function WordPressSingleSitePanel({ site }) {
                     size='small'
                     variant='bggradient'
                     color='secondary'
-                    onClick={() =>
-                        setPostPage(postPage + 1) &&
-                        fetchWordPressComSitePosts(
-                            site.ID,
-                            setSitePosts,
-                            postPage,
-                            rowsPerPage,
-                            setPostPage,
-                            setLoadingSitePosts
-                        )
-                    }
+                    onClick={() => setFetchPostButtonClicked(true)}
                 >
                     {loadingSitePosts ? 'Loading ...' : 'Fetch Recent Posts'}
                 </Button>
@@ -172,20 +198,62 @@ export default function WordPressSingleSitePanel({ site }) {
                     onPageChange={handleChangePage}
                     rowsPerPage={rowsPerPage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                    }}
                 />
             )}
 
             {(sitePosts.found && (
                 <Box>
-                    <h3>Posts</h3>
+                    <Typography variant='h4'>Posts</Typography>
                     {sitePosts.posts.map((post) => (
-                        <Box key={post.ID}>
-                            <a href={post.URL} target='_blank'>
-                                <Typography>
-                                    <h4>{post.title}</h4>
+                        <Card
+                            key={post.ID}
+                            sx={{
+                                mb: 3,
+                                '& a': {
+                                    borderBottom: '1px solid #a45800',
+                                },
+                                '& a:hover': {
+                                    borderBottom: '2px solid #a45800',
+                                },
+                            }}
+                        >
+                            <CardContent>
+                                <Typography variant='h6' mb={2}>
+                                    <a href={post.URL} target='_blank'>
+                                        {/* LEARN: HTML Encoding and Decoding */}
+                                        {he.decode(post.title)}
+                                    </a>
                                 </Typography>
-                            </a>
-                        </Box>
+                                <Typography variant='body1'>
+                                    Author: {post.author.name}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    {/* LEARN: about working with dates on JS*/}
+                                    Date:{' '}
+                                    {new Intl.DateTimeFormat(
+                                        'default',
+                                        postDateOptions
+                                    ).format(Date.parse(post.date))}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    Like: {post.author.name}
+                                </Typography>
+                                <Typography variant='body1'>
+                                    <a href={post.URL} target='_blank'>
+                                        ShortLink: {post.short_URL}
+                                    </a>
+                                </Typography>
+                            </CardContent>
+                            <CardActions>
+                                <Button size='small' variant='bggradient'>
+                                    Learn More
+                                </Button>
+                            </CardActions>
+                        </Card>
                     ))}
                 </Box>
             )) ||

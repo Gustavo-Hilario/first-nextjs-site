@@ -39,7 +39,7 @@ export default function WordPressSitesContainer({ wordPressComSites }) {
                 <Grid
                     item
                     sm={12}
-                    md={8}
+                    md={6}
                     sx={{
                         px: 2,
                         backgroundColor: 'background.dashnav',
@@ -62,7 +62,7 @@ export default function WordPressSitesContainer({ wordPressComSites }) {
                 <Grid
                     item
                     sm={12}
-                    md={4}
+                    md={6}
                     sx={{
                         px: 2,
                         backgroundColor: 'background.dashcontent',

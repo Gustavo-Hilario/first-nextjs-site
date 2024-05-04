@@ -17,6 +17,7 @@
     "@mui/material": "^5.15.15",
     "@mui/material-nextjs": "^5.15.11",
     "@reduxjs/toolkit": "^2.2.3",
+    "he": "^1.2.0",
     "mongodb": "^6.5.0",
     "mongoose": "^8.3.2",
     "next": "14.2.1",

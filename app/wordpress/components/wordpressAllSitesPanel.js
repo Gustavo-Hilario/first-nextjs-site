@@ -1,17 +1,21 @@
 'use client';
 
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import Avatar from '@mui/material/Avatar';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Button from '@mui/material/Button';
-import Fade from '@mui/material/Fade';
+import {
+    Box,
+    Accordion,
+    AccordionSummary,
+    Avatar,
+    AccordionDetails,
+    Typography,
+    Button,
+    Fade,
+    Badge,
+    Autocomplete,
+    TextField,
+} from '@mui/material';
 
-import Badge from '@mui/material/Badge';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 
 import { useState } from 'react';
@@ -22,6 +26,7 @@ export default function WordPressAllSitesPanel({
     setExpandedItem,
 }) {
     const [numberSitesLoading, setNumberSitesLoading] = useState(20);
+    console.log(wordPressComSites);
 
     const handleExpansion = (siteID) => {
         expandedItem === siteID
@@ -54,6 +59,22 @@ export default function WordPressAllSitesPanel({
                     </Button>
                 </Box>
             )}
+            <Autocomplete
+                disablePortal
+                id='all-dotcom-sites'
+                options={wordPressComSites.sites.map((site) => {
+                    return `${site.name} – ${site.URL}`;
+                })}
+                renderInput={(params) => {
+                    return (
+                        <TextField
+                            {...params}
+                            label='Search Sites'
+                            variant='standard'
+                        />
+                    );
+                }}
+            />
             {wordPressComSites.sites.map((site, index) => {
                 return (
                     <>
