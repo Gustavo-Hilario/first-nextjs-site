@@ -6,11 +6,7 @@ import { CardActionArea } from '@mui/material';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 
-export default function PokemonDetail({
-    pokemonInfo,
-    selectedPokemon,
-    setSelectedPokemon,
-}) {
+export default function PokemonDetail({ selectedPokemon }) {
     return (
         <div>
             <Box
@@ -30,22 +26,8 @@ export default function PokemonDetail({
                 >
                     Details
                 </Typography>
-                {Object.keys(selectedPokemon).length !== 0 ? (
-                    <Button
-                        size='small'
-                        variant='bggradient'
-                        color='secondary'
-                        onClick={() => {
-                            setSelectedPokemon({});
-                        }}
-                    >
-                        Clear
-                    </Button>
-                ) : (
-                    ''
-                )}
             </Box>
-            {Object.keys(pokemonInfo).length === 0 ? (
+            {Object.keys(selectedPokemon).length === 0 ? (
                 <Typography
                     variant='body1'
                     sx={{
@@ -57,7 +39,7 @@ export default function PokemonDetail({
             ) : (
                 ''
             )}
-            {Object.keys(pokemonInfo).length !== 0 ? (
+            {Object.keys(selectedPokemon).length !== 0 ? (
                 <div
                     style={{
                         display: 'flex',
@@ -72,8 +54,8 @@ export default function PokemonDetail({
                             <CardMedia
                                 component='img'
                                 height='auto'
-                                image={pokemonInfo.image}
-                                alt={pokemonInfo.name}
+                                image={selectedPokemon.avatarImage}
+                                alt={selectedPokemon.avatarName}
                             />
                             <CardContent>
                                 <Typography
@@ -81,8 +63,8 @@ export default function PokemonDetail({
                                     variant='h5'
                                     component='div'
                                 >
-                                    {pokemonInfo.name.charAt(0).toUpperCase() +
-                                        pokemonInfo.name.slice(1)}
+                                    {/* {selectedPokemon.name.charAt(0).toUpperCase() +
+                                        selectedPokemon.name.slice(1)} */}
                                 </Typography>
                                 <Box
                                     component='section'
@@ -98,17 +80,18 @@ export default function PokemonDetail({
                                 >
                                     <div>
                                         <Typography color='secondary'>
-                                            <b>{`Weight: ${pokemonInfo.weight}`}</b>
+                                            <b>{`Weight: ${selectedPokemon.weight}`}</b>
                                         </Typography>
                                         <Typography color='secondary'>
-                                            <b>{`Height: ${pokemonInfo.height}`}</b>
+                                            <b>{`Height: ${selectedPokemon.height}`}</b>
                                         </Typography>
                                         <br />
                                         <Typography color='secondary'>
                                             <b>Abilities:</b>{' '}
                                         </Typography>
-                                        {pokemonInfo.abilities !== undefined ? (
-                                            pokemonInfo.abilities.map(
+                                        {selectedPokemon.abilities !==
+                                        undefined ? (
+                                            selectedPokemon.abilities.map(
                                                 (ability, index) => (
                                                     <Typography
                                                         color='secondary'
@@ -127,8 +110,8 @@ export default function PokemonDetail({
                                     <div>
                                         <br />
                                         <b>Stats:</b>
-                                        {pokemonInfo.stats !== undefined ? (
-                                            pokemonInfo.stats.map(
+                                        {selectedPokemon.stats !== undefined ? (
+                                            selectedPokemon.stats.map(
                                                 (stat, index) => (
                                                     <Typography
                                                         variant='body2'

@@ -1,112 +1,115 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import { getAllPokemons, getPokemonDetail } from '../../lib/data/pokemonAPI';
 import PokemonDetail from './pokemonDetail';
+import AvatarList from '../../components/avatarList';
+import DisplayRange from '../../components/displayRange';
 
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
+import { Autocomplete, TextField, Button, Box } from '@mui/material';
+
 import Grid from '@mui/system/Unstable_Grid';
 
-import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import Grow from '@mui/material/Grow';
 
 const NUMBER_OF_POKEMON_AVATARS = 20;
+
+const generateRandomPokemonIDs = (limit, offset) => {
+    const numbers = new Set();
+    while (numbers.size < NUMBER_OF_POKEMON_AVATARS) {
+        const randomNumber =
+            Math.floor(Math.random() * (limit - offset + 1)) + offset;
+        numbers.add(randomNumber);
+    }
+    return [...numbers];
+};
 
 export default function Pokemon() {
     // Setting to check if the screen is mobile -- then use that to text accordingly
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const [allPokemons, setAllPokemons] = useState([]);
-    const [pokemonsLoadingLimit, setPokemonsLoadingLimit] = useState(150);
-    const [pokemonsOffset, setPokemonsOffset] = useState(0);
-    const [selectedPokemon, setSelectedPokemon] = useState({});
-    const [pokemonInfo, setPokemonInfo] = useState({});
-    const [randomPokemonIDs, setRandomPokemonIDs] = useState([]);
+    const [pokemonState, setPokemonState] = useState({
+        pokemons: [],
+        offset: 0,
+        limit: 150,
+        selectedPokemon: {},
+        pokemonInfo: {},
+        randomPokemonIDs: generateRandomPokemonIDs(150, 0),
+    });
+
+    const [loadPokemons, setLoadPokemons] = useState(false);
 
     useEffect(() => {
         async function fetchPokemons() {
-            const data = await getAllPokemons(
-                pokemonsLoadingLimit,
-                pokemonsOffset
+            const pokemonEndpoints = await getAllPokemons(
+                pokemonState.limit,
+                pokemonState.offset
             );
-            const promises = data.map(async (pokemon) => {
-                const details = await getPokemonDetail(pokemon.name);
-                return {
-                    name:
-                        pokemon.name.charAt(0).toUpperCase() +
-                        pokemon.name.slice(1),
-                    image: details.sprites?.front_default,
-                };
-            });
 
-            const pokemonNames = await Promise.all(promises);
-            setAllPokemons(pokemonNames);
-        }
-
-        fetchPokemons();
-    }, [pokemonsLoadingLimit, pokemonsOffset]);
-
-    useEffect(() => {
-        async function fetchPokemonDetail() {
-            // Check if selectedPokemon is not an empty object
-            if (Object.keys(selectedPokemon).length !== 0) {
-                const data = await getPokemonDetail(
-                    selectedPokemon.name.toLowerCase()
-                );
-                setPokemonInfo({
-                    name: data.name,
-                    weight: data.weight,
-                    height: data.height,
-                    abilities: data.abilities,
-                    stats: data.stats,
-                    image: data.sprites?.front_default,
+            async function fetchPokemonDetails() {
+                const promises = pokemonEndpoints.map(async (pokemon) => {
+                    const allPokeInfo = await getPokemonDetail(pokemon.name);
+                    return {
+                        ...allPokeInfo,
+                        // LEARN: NAME SHOULD NOT BE CHANGED HERE
+                        avatarName:
+                            pokemon.name.charAt(0).toUpperCase() +
+                            pokemon.name.slice(1),
+                        avatarImage: allPokeInfo.sprites?.front_default,
+                    };
                 });
-            } else {
-                setPokemonInfo({});
+
+                const allPokemons = await Promise.all(promises);
+                setPokemonState((prevState) => ({
+                    ...prevState,
+                    pokemons: allPokemons,
+                }));
             }
-        }
 
-        fetchPokemonDetail();
-        setRandomPokemonIDs(
-            // Randomly select 20 pokemons to render from the newly fetched pokemons
-            randomNumberOfPokemonsToRender(
-                pokemonsOffset,
-                pokemonsLoadingLimit,
-                NUMBER_OF_POKEMON_AVATARS
-            )
+            fetchPokemonDetails();
+        }
+        fetchPokemons();
+    }, [loadPokemons]);
+
+    const handleLoadMore = () => {
+        if (pokemonState.limit >= 1050) return;
+        setPokemonState((prevState) => ({
+            ...prevState,
+            offset: prevState.limit,
+            limit: prevState.limit + 150,
+            randomPokemonIDs: generateRandomPokemonIDs(
+                prevState.limit + 150,
+                prevState.limit
+            ),
+        }));
+        setLoadPokemons(!loadPokemons);
+    };
+
+    const handleReset = () => {
+        setPokemonState((prevState) => ({
+            ...prevState,
+            offset: 0,
+            limit: 150,
+            selectedPokemon: {},
+        }));
+    };
+
+    const handleSelectPokemon = (name) => {
+        const selected = pokemonState.pokemons.find(
+            (pokemon) => pokemon.name === name
         );
-    }, [selectedPokemon, pokemonsLoadingLimit, pokemonsOffset]);
+        setPokemonState((prevState) => ({
+            ...prevState,
+            selectedPokemon: selected || {},
+        }));
+    };
 
-    function randomNumberOfPokemonsToRender(
-        pokemonsOffset,
-        pokemonsLoadingLimit,
-        numberOfPokemons
-    ) {
-        const numbers = new Set();
-
-        while (numbers.size < numberOfPokemons) {
-            const randomNumber =
-                Math.floor(
-                    Math.random() * (pokemonsLoadingLimit - pokemonsOffset + 1)
-                ) + pokemonsOffset;
-
-            numbers.add(randomNumber);
-        }
-
-        return [...numbers];
-    }
+    // console.log(pokemonState);
 
     return (
         <div>
@@ -121,34 +124,11 @@ export default function Pokemon() {
                     margin: '20px',
                 }}
             >
-                {allPokemons.map((pokemon, index) => {
-                    if (randomPokemonIDs.includes(index)) {
-                        return (
-                            <Grow
-                                in={true}
-                                key={pokemon.name}
-                                style={{ transformOrigin: '0 0 0' }}
-                                timeout={1000 + index * 10}
-                            >
-                                <Avatar
-                                    variant='circular'
-                                    key={pokemon.name}
-                                    alt={pokemon.name}
-                                    src={pokemon.image}
-                                    sx={{
-                                        width: 100,
-                                        height: 100,
-                                    }}
-                                    onClick={() =>
-                                        setSelectedPokemon({
-                                            name: pokemon.name,
-                                        })
-                                    }
-                                />
-                            </Grow>
-                        );
-                    }
-                })}
+                <AvatarList
+                    items={pokemonState.pokemons}
+                    returnSelectedItem={handleSelectPokemon}
+                    randomItemIDs={pokemonState.randomPokemonIDs}
+                />
             </div>
             <Box
                 sx={{
@@ -172,43 +152,24 @@ export default function Pokemon() {
                             gap: 2,
                         }}
                     >
-                        <Typography
-                            variant='body1'
-                            sx={{
-                                textAlign: 'center',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1,
-                            }}
-                        >
-                            Displaying{' '}
-                            <span>
-                                <b>{NUMBER_OF_POKEMON_AVATARS}</b>
-                            </span>{' '}
-                            Pokemons out of{' '}
-                            <span>
-                                <b>{allPokemons.length}</b>
-                            </span>
-                            {/* {`Displaying ${NUMBER_OF_POKEMON_AVATARS} Pokemons out of `} */}
-                            <Tooltip
-                                title={`Between elements ${pokemonsOffset} and ${pokemonsLoadingLimit} from the list of all pokemons`}
-                            >
-                                <InfoRoundedIcon fontSize='small' />
-                            </Tooltip>
-                        </Typography>
+                        <DisplayRange
+                            loaded={NUMBER_OF_POKEMON_AVATARS}
+                            rangeBase={pokemonState.offset}
+                            rangeTop={pokemonState.limit}
+                        />
                         <Button
                             size='small'
                             variant='bggradient'
                             color='secondary'
                             onClick={() => {
-                                setRandomPokemonIDs(
-                                    // Randomly select 20 pokemons to render from the newly fetched pokemons
-                                    randomNumberOfPokemonsToRender(
-                                        pokemonsOffset,
-                                        pokemonsLoadingLimit,
-                                        NUMBER_OF_POKEMON_AVATARS
-                                    )
-                                );
+                                // Randomly select 20 pokemons to render from the newly fetched pokemons
+                                setPokemonState((prevState) => ({
+                                    ...prevState,
+                                    randomPokemonIDs: generateRandomPokemonIDs(
+                                        prevState.limit,
+                                        prevState.offset
+                                    ),
+                                }));
                             }}
                         >
                             <RefreshRoundedIcon />
@@ -228,12 +189,19 @@ export default function Pokemon() {
                             disablePortal
                             id='pick-your-pokemon'
                             clearOnEscape
-                            options={allPokemons.map((pokemon) => {
-                                return pokemon.name;
+                            options={pokemonState.pokemons.map((pokemon) => {
+                                return (
+                                    pokemon.name.charAt(0).toUpperCase() +
+                                    pokemon.name.slice(1)
+                                );
                             })}
                             value={
-                                Object.keys(selectedPokemon).length !== 0
-                                    ? selectedPokemon.name
+                                Object.keys(pokemonState.selectedPokemon)
+                                    .length !== 0
+                                    ? pokemonState.selectedPokemon.name
+                                          .charAt(0)
+                                          .toUpperCase() +
+                                      pokemonState.selectedPokemon.name.slice(1)
                                     : 'Pikachu'
                             }
                             sx={{
@@ -251,10 +219,14 @@ export default function Pokemon() {
                             )}
                             onChange={(event, value) => {
                                 if (value !== null) {
-                                    setSelectedPokemon({ name: value });
-                                    return;
+                                    setPokemonState((prevState) => ({
+                                        ...prevState,
+                                        selectedPokemon: {
+                                            name: value,
+                                        },
+                                    }));
                                 }
-                                setSelectedPokemon({});
+                                alert('Pokemon not correctly selected');
                             }}
                         />
                     </Grid>
@@ -267,46 +239,49 @@ export default function Pokemon() {
                             gap: 2,
                         }}
                     >
-                        <Button
-                            size='small'
-                            variant='bggradient'
-                            color='secondary'
-                            onClick={() => {
-                                // Load more pokemons -- max number of pokemons will be 1050
-                                if (pokemonsLoadingLimit >= 1050) {
-                                    return;
+                        {pokemonState.limit < 1050 && (
+                            <Button
+                                size='small'
+                                variant='bggradient'
+                                color='secondary'
+                                onClick={
+                                    // Load more pokemons -- max number of pokemons will be 1050
+                                    handleLoadMore
                                 }
-
-                                setPokemonsOffset(pokemonsLoadingLimit);
-                                setPokemonsLoadingLimit(
-                                    pokemonsLoadingLimit + 150
-                                );
-                            }}
-                        >
-                            <AddCircleOutlineRoundedIcon />
-                            Load More{!isMobile && ' Pokemons'}
-                        </Button>
-                        <Button
-                            size='small'
-                            variant='bggradient'
-                            color='secondary'
-                            onClick={() => {
-                                setPokemonsOffset(0);
-                                setPokemonsLoadingLimit(150);
-                                setSelectedPokemon({});
-                            }}
-                        >
-                            <RefreshRoundedIcon />
-                            Reset
-                        </Button>
+                            >
+                                <AddCircleOutlineRoundedIcon />
+                                Load More{!isMobile && ' Pokemons'}
+                            </Button>
+                        )}
+                        {pokemonState.limit > 150 && (
+                            <Button
+                                size='small'
+                                variant='bggradient'
+                                color='secondary'
+                                onClick={handleReset}
+                            >
+                                <RefreshRoundedIcon />
+                                Reset
+                            </Button>
+                        )}
+                        {Object.keys(pokemonState.selectedPokemon).length !==
+                        0 ? (
+                            <Button
+                                size='small'
+                                variant='bggradient'
+                                color='secondary'
+                                onClick={handleReset}
+                            >
+                                Clear
+                            </Button>
+                        ) : (
+                            ''
+                        )}
                     </Grid>
                 </Grid>
             </Box>
-            <PokemonDetail
-                pokemonInfo={pokemonInfo}
-                selectedPokemon={selectedPokemon}
-                setSelectedPokemon={setSelectedPokemon}
-            />
+
+            <PokemonDetail selectedPokemon={pokemonState.selectedPokemon} />
         </div>
     );
 }
