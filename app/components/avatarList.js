@@ -14,7 +14,7 @@ export default function AvatarList({
                             in={true}
                             key={item.avatarName}
                             style={{ transformOrigin: '0 0 0' }}
-                            timeout={1000 + index * 10}
+                            timeout={500 + index * 2}
                         >
                             <Avatar
                                 variant='circular'

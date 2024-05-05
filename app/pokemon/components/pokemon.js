@@ -190,18 +190,12 @@ export default function Pokemon() {
                             id='pick-your-pokemon'
                             clearOnEscape
                             options={pokemonState.pokemons.map((pokemon) => {
-                                return (
-                                    pokemon.name.charAt(0).toUpperCase() +
-                                    pokemon.name.slice(1)
-                                );
+                                return pokemon.avatarName;
                             })}
                             value={
                                 Object.keys(pokemonState.selectedPokemon)
                                     .length !== 0
-                                    ? pokemonState.selectedPokemon.name
-                                          .charAt(0)
-                                          .toUpperCase() +
-                                      pokemonState.selectedPokemon.name.slice(1)
+                                    ? pokemonState.selectedPokemon.avatarName
                                     : 'Pikachu'
                             }
                             sx={{
@@ -219,14 +213,16 @@ export default function Pokemon() {
                             )}
                             onChange={(event, value) => {
                                 if (value !== null) {
+                                    const selected =
+                                        pokemonState.pokemons.find(
+                                            (pokemon) =>
+                                                pokemon.avatarName === value
+                                        ) || {};
                                     setPokemonState((prevState) => ({
                                         ...prevState,
-                                        selectedPokemon: {
-                                            name: value,
-                                        },
+                                        selectedPokemon: selected,
                                     }));
                                 }
-                                alert('Pokemon not correctly selected');
                             }}
                         />
                     </Grid>
