@@ -24,9 +24,10 @@ export default function WordPressAllSitesPanel({
     wordPressComSites,
     expandedItem,
     setExpandedItem,
+    setSelectedSiteInfo,
 }) {
     const [numberSitesLoading, setNumberSitesLoading] = useState(20);
-    console.log(wordPressComSites);
+    // console.log(wordPressComSites);
 
     const handleExpansion = (siteID) => {
         expandedItem === siteID
@@ -63,8 +64,11 @@ export default function WordPressAllSitesPanel({
                 disablePortal
                 id='all-dotcom-sites'
                 options={wordPressComSites.sites.map((site) => {
-                    return `${site.name} – ${site.URL}`;
+                    return site;
                 })}
+                getOptionLabel={(option) => {
+                    return `${option.name} – ${option.URL}`;
+                }}
                 renderInput={(params) => {
                     return (
                         <TextField
@@ -73,6 +77,12 @@ export default function WordPressAllSitesPanel({
                             variant='standard'
                         />
                     );
+                }}
+                onChange={(event, value) => {
+                    setSelectedSiteInfo(value);
+                }}
+                sx={{
+                    mb: 2,
                 }}
             />
             {wordPressComSites.sites.map((site, index) => {

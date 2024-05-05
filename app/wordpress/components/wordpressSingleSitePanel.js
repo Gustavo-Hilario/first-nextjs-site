@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 const he = require('he');
 
 import {
@@ -24,32 +24,23 @@ const postDateOptions = {
     timeZoneName: 'short',
 };
 // Function to fetch posts from a WordPress.com site
-const fetchWordPressComSitePosts = async (
-    siteID,
-    setSitePosts,
-    postPage,
-    rowsPerPage,
-    setLoadingSitePosts
-) => {
+const fetchWordPressComSitePosts = async (siteID, postControllers) => {
     if (!siteID) return alert('No site ID provided');
-
-    setLoadingSitePosts(true);
 
     try {
         // Pagination component starts at 0, but the API starts at 1
         const response = await fetch(
-            `/api/wordpress/sites/${siteID}/posts/?number=${rowsPerPage}&page=${
-                postPage + 1
-            }`,
+            `/api/wordpress/sites/${siteID}/posts/?number=${
+                postControllers.current.rowsPerPage
+            }&page=${postControllers.current.page + 1}`,
             {
                 method: 'POST',
             }
         );
 
         if (response.ok) {
-            setLoadingSitePosts(false);
             const data = await response.json();
-            return setSitePosts(data);
+            return data;
         }
     } catch (error) {
         console.error(error);
@@ -59,49 +50,40 @@ const fetchWordPressComSitePosts = async (
 
 export default function WordPressSingleSitePanel({ site }) {
     const [sitePosts, setSitePosts] = useState({});
-    const [loadingSitePosts, setLoadingSitePosts] = useState(false);
-    const [fecthPostButtonClicked, setFetchPostButtonClicked] = useState(false);
+    const [triggerFetch, setTriggerFetch] = useState(false);
+    const postControllers = useRef({
+        loading: false,
+        page: 0,
+        rowsPerPage: 10,
+    });
 
-    // Each fetch request will return 10 posts per page
-    const [postPage, setPostPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-
-    // Reset the state when a new site is selected
     useEffect(() => {
-        if (site === null || site === undefined) return;
+        postControllers.current = {
+            loading: true,
+            page: 0,
+            rowsPerPage: 10,
+        };
 
-        setSitePosts({});
-        setPostPage(0);
-        setRowsPerPage(10);
-        fetchWordPressComSitePosts(
-            site.ID,
-            setSitePosts,
-            0,
-            10,
-            setLoadingSitePosts
-        );
+        setTriggerFetch((prev) => !prev);
     }, [site]);
 
     // Fetch posts when the site is selected
     useEffect(() => {
-        let newPage;
         if (site === null || site === undefined) return;
 
-        if (fecthPostButtonClicked === true) {
-            newPage = postPage + 1;
-            setPostPage(newPage);
-        }
-
-        fetchWordPressComSitePosts(
-            site.ID,
-            setSitePosts,
-            newPage ? newPage : postPage,
-            rowsPerPage,
-            setLoadingSitePosts
-        );
-
-        setFetchPostButtonClicked(false);
-    }, [postPage, rowsPerPage, fecthPostButtonClicked]);
+        (async () => {
+            try {
+                const fetchedPosts = await fetchWordPressComSitePosts(
+                    site.ID,
+                    postControllers
+                );
+                postControllers.current.loading = false;
+                setSitePosts(fetchedPosts);
+            } catch (error) {
+                console.error('Failed to fetch posts:', error);
+            }
+        })();
+    }, [triggerFetch]);
 
     // Show a message if no site is selected
     if (!site) {
@@ -110,20 +92,29 @@ export default function WordPressSingleSitePanel({ site }) {
 
     // Handling Pagination Component Logic
     const handleChangePage = (event, newPage) => {
-        setPostPage(newPage);
+        postControllers.current.page = newPage;
+        postControllers.current.loading = true;
+        setTriggerFetch((prev) => !prev);
     };
 
     const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPostPage(0);
+        postControllers.current.rowsPerPage = parseInt(event.target.value, 10);
+        postControllers.current.loading = true;
+        setTriggerFetch((prev) => !prev);
     };
 
-    // Learn – Why component is reloaded multiple times
-    console.log('Component Reloaded');
-
+    function notFoundPosts(sitePosts, postControllers) {
+        if (
+            sitePosts.found <
+            (postControllers.current.page + 1) *
+                postControllers.current.rowsPerPage
+        ) {
+            return true;
+        } else return false;
+    }
     // console.log('Posts: ', sitePosts);
-    // console.log('postPage: ', postPage);
-    // console.log('rowsPerPage: ', rowsPerPage);
+    // console.log('postPage: ', postControllers.current.page);
+    // console.log('rowsPerPage: ', postControllers.current.rowsPerPage);
 
     return (
         <Box>
@@ -180,23 +171,46 @@ export default function WordPressSingleSitePanel({ site }) {
                     my: 2,
                 }}
             >
-                <Button
-                    size='small'
-                    variant='bggradient'
-                    color='secondary'
-                    onClick={() => setFetchPostButtonClicked(true)}
-                >
-                    {loadingSitePosts ? 'Loading ...' : 'Fetch Recent Posts'}
-                </Button>
+                {notFoundPosts(sitePosts, postControllers) ? (
+                    <Button
+                        variant='bggradient'
+                        onClick={() => {
+                            postControllers.current = {
+                                loading: true,
+                                page: 0,
+                                rowsPerPage: 10,
+                            };
+                            setTriggerFetch((prev) => !prev);
+                        }}
+                    >
+                        Reset
+                    </Button>
+                ) : (
+                    <Button
+                        size='small'
+                        variant='bggradient'
+                        color='secondary'
+                        onClick={() => {
+                            postControllers.current.page++;
+                            postControllers.current.loading = true;
+
+                            setTriggerFetch((prev) => !prev);
+                        }}
+                    >
+                        {postControllers.current.loading
+                            ? 'Loading ...'
+                            : 'Fetch Recent Posts'}
+                    </Button>
+                )}
             </Box>
 
-            {sitePosts.found && (
+            {Object.keys(sitePosts).length && sitePosts.found && (
                 <TablePagination
                     component='div'
                     count={sitePosts.found}
-                    page={postPage}
+                    page={postControllers.current.page}
                     onPageChange={handleChangePage}
-                    rowsPerPage={rowsPerPage}
+                    rowsPerPage={postControllers.current.rowsPerPage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                     sx={{
                         display: 'flex',
@@ -205,7 +219,7 @@ export default function WordPressSingleSitePanel({ site }) {
                 />
             )}
 
-            {(sitePosts.found && (
+            {Object.keys(sitePosts).length && sitePosts.found !== 0 && (
                 <Box>
                     <Typography variant='h4'>Posts</Typography>
                     {sitePosts.posts.map((post) => (
@@ -256,8 +270,26 @@ export default function WordPressSingleSitePanel({ site }) {
                         </Card>
                     ))}
                 </Box>
-            )) ||
-                'No posts found'}
+            )}
+
+            {notFoundPosts(sitePosts, postControllers) ? (
+                <Box>
+                    <Typography variant='h6'>{`Not more posts were found. `}</Typography>
+                    <Typography variant='body1'>
+                        {`Trying to load posts between ${
+                            (postControllers.current.page + 1) *
+                                postControllers.current.rowsPerPage -
+                            postControllers.current.rowsPerPage
+                        }-${
+                            (postControllers.current.page + 1) *
+                            postControllers.current.rowsPerPage
+                        }. Total posts: ${site.post_count}
+                        `}
+                    </Typography>
+                </Box>
+            ) : (
+                ''
+            )}
         </Box>
     );
 }

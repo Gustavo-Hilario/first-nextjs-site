@@ -54,6 +54,7 @@ export default function WordPressSitesContainer({ wordPressComSites }) {
                                 wordPressComSites={wordPressComSites}
                                 expandedItem={expandedItem}
                                 setExpandedItem={setExpandedItem}
+                                setSelectedSiteInfo={setSelectedSiteInfo}
                             />
                         )
                     }
