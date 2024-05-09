@@ -25,7 +25,9 @@ export default function AvatarList({
                                     width: 100,
                                     height: 100,
                                 }}
-                                onClick={() => returnSelectedItem(item.name)}
+                                onClick={() =>
+                                    returnSelectedItem(item.avatarName)
+                                }
                             />
                         </Grow>
                     );

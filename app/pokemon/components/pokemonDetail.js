@@ -7,6 +7,10 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 
 export default function PokemonDetail({ selectedPokemon }) {
+    const selectedPokemonExists = () => {
+        return Object.keys(selectedPokemon).length !== 0;
+    };
+
     return (
         <div>
             <Box
@@ -24,10 +28,12 @@ export default function PokemonDetail({ selectedPokemon }) {
                         textAlign: 'center',
                     }}
                 >
-                    Details
+                    {selectedPokemonExists()
+                        ? selectedPokemon.avatarName
+                        : 'Select a Pokemon'}
                 </Typography>
             </Box>
-            {Object.keys(selectedPokemon).length === 0 ? (
+            {!selectedPokemonExists() ? (
                 <Typography
                     variant='body1'
                     sx={{
@@ -39,7 +45,7 @@ export default function PokemonDetail({ selectedPokemon }) {
             ) : (
                 ''
             )}
-            {Object.keys(selectedPokemon).length !== 0 ? (
+            {selectedPokemonExists() ? (
                 <div
                     style={{
                         display: 'flex',

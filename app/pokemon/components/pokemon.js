@@ -96,20 +96,28 @@ export default function Pokemon() {
             offset: 0,
             limit: 150,
             selectedPokemon: {},
+            randomPokemonIDs: generateRandomPokemonIDs(150, 0),
         }));
+    };
+
+    const handleClearSelection = () => {
+        setPokemonState((prev) => {
+            return {
+                ...prev,
+                selectedPokemon: {},
+            };
+        });
     };
 
     const handleSelectPokemon = (name) => {
         const selected = pokemonState.pokemons.find(
-            (pokemon) => pokemon.name === name
+            (pokemon) => pokemon.avatarName === name
         );
         setPokemonState((prevState) => ({
             ...prevState,
             selectedPokemon: selected || {},
         }));
     };
-
-    // console.log(pokemonState);
 
     return (
         <div>
@@ -213,15 +221,7 @@ export default function Pokemon() {
                             )}
                             onChange={(event, value) => {
                                 if (value !== null) {
-                                    const selected =
-                                        pokemonState.pokemons.find(
-                                            (pokemon) =>
-                                                pokemon.avatarName === value
-                                        ) || {};
-                                    setPokemonState((prevState) => ({
-                                        ...prevState,
-                                        selectedPokemon: selected,
-                                    }));
+                                    handleSelectPokemon(value);
                                 }
                             }}
                         />
@@ -266,7 +266,7 @@ export default function Pokemon() {
                                 size='small'
                                 variant='bggradient'
                                 color='secondary'
-                                onClick={handleReset}
+                                onClick={handleClearSelection}
                             >
                                 Clear
                             </Button>
