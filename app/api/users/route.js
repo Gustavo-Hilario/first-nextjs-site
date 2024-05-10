@@ -1,29 +1,22 @@
 // pages/api/users.js
 import connectDB from '../../lib/mongodb';
-import User from '../../../Models/User';
+import User from '../../lib/Models/User';
 
 export async function POST(Request) {
     try {
-        const { name, email } = await Request.json();
+        const { name, age } = await Request.json();
         await connectDB();
 
         const person = new User({
             name: name,
-            email: email,
+            age: age,
         });
 
         await person.save();
 
-        // // Connect to the database
-        // const client = await clientPromise();
-
-        // const db = client.db('firstnextjs'); // Your database name
-
-        // // Insert a new document into the "users" collection
-        // const user = await db.collection('users').insertOne(req);
-        return Response.json('Test');
+        return Response.json({ name, age });
     } catch (error) {
         // Return an error response if something goes wrong
-        res.status(500).json({ error: error.message });
+        return Response.json({ error: error.message });
     }
 }
