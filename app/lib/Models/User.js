@@ -1,5 +1,10 @@
 import { Schema, models, model } from 'mongoose';
 
+const favoritePokemons = new Schema({
+    id: Number,
+    name: String,
+});
+
 const userSchema = new Schema(
     {
         _id: Schema.Types.ObjectId,
@@ -7,6 +12,7 @@ const userSchema = new Schema(
         email: String,
         password: String,
         age: Number,
+        favoritePokemons: [favoritePokemons],
     },
     {
         timestamps: true,

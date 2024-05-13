@@ -10,13 +10,14 @@ export default function AvatarList({
 }) {
     const router = useRouter();
 
-    const handleSaveFavoritePokemon = async (pokemonName) => {
+    const handleSaveFavoritePokemon = async (pokemonid, pokemonName) => {
         const response = await fetch('/api/pokemon', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                pokemonID: pokemonid,
                 pokemonName: pokemonName,
             }),
         });
@@ -30,17 +31,17 @@ export default function AvatarList({
             // console.log(data);
         } else {
             // Handle other status codes
-            console.error('Failed to save favorite pokemon');
+            console.error('Failed to save/delete favorite pokemon');
         }
     };
     return (
         <>
-            {items.map((item, index) => {
+            {items.map((pokemon, index) => {
                 if (randomItemIDs.includes(index)) {
                     return (
                         <Grow
                             in={true}
-                            key={item.avatarName}
+                            key={pokemon.avatarName}
                             style={{ transformOrigin: '0 0 0' }}
                             timeout={500 + index * 2}
                         >
@@ -49,21 +50,26 @@ export default function AvatarList({
                                 color='secondary'
                                 overlap='circular'
                                 onClick={() => {
-                                    handleSaveFavoritePokemon(item.avatarName);
+                                    handleSaveFavoritePokemon(
+                                        pokemon.id,
+                                        pokemon.avatarName
+                                    );
                                 }}
                             >
                                 <Box>
                                     <Avatar
                                         variant='circular'
-                                        key={item.avatarName}
-                                        alt={item.avatarName}
-                                        src={item.avatarImage}
+                                        key={pokemon.avatarName}
+                                        alt={pokemon.avatarName}
+                                        src={pokemon.avatarImage}
                                         sx={{
                                             width: 100,
                                             height: 100,
                                         }}
                                         onClick={() =>
-                                            returnSelectedItem(item.avatarName)
+                                            returnSelectedItem(
+                                                pokemon.avatarName
+                                            )
                                         }
                                     />
                                 </Box>
