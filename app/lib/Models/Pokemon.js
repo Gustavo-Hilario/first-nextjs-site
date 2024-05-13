@@ -1,10 +1,14 @@
 import { Schema, models, model } from 'mongoose';
 
-const pokemonSchema = new Schema({
+const favPokemonsSchema = new Schema({
     favorites: [
         {
-            type: Schema.Types.ObjectId,
+            name: String,
+            url: String,
             ref: 'User',
         },
     ],
 });
+
+export default models.favoritePokemons ||
+    model('favoritePokemons', favPokemonsSchema);

@@ -11,10 +11,14 @@ export default withMiddlewareAuthRequired({
         const res = NextResponse.next();
         const session = await getSession(req, res);
 
-        // Attach user to the request for downstream usage
-        req.user = session.user;
-        console.log('User:', session.user);
-        return NextResponse.next();
+        // If the user is authenticated, include the user ID in the response headers
+        if (session?.user) {
+            // console.log('User:', session.user);
+            res.headers.set('x-user-id', session.user.sub); // safely include user identifier
+            return res;
+        }
+
+        return new Response('Unauthorized', { status: 401 });
     },
 });
 
