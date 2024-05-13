@@ -3,7 +3,6 @@
 // import Loading from './loading';
 
 import Typography from '@mui/material/Typography';
-
 import Pokemon from './components/pokemon';
 
 export default function PokemonPage() {
