@@ -11,6 +11,8 @@ export default withMiddlewareAuthRequired({
         const res = NextResponse.next();
         const session = await getSession(req, res);
 
+        // console.log('User from Middleware:', session?.user);
+
         // If the user is authenticated, include the user ID in the response headers
         if (session?.user) {
             // console.log('User:', session.user);
@@ -23,5 +25,5 @@ export default withMiddlewareAuthRequired({
 });
 
 export const config = {
-    matcher: '/api/pokemon',
+    matcher: ['/api/user', '/api/pokemon'],
 };

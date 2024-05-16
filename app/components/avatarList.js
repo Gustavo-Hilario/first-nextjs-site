@@ -10,7 +10,11 @@ export default function AvatarList({
 }) {
     const router = useRouter();
 
-    const handleSaveFavoritePokemon = async (pokemonid, pokemonName) => {
+    const handleSaveRemoveFavoritePokemon = async (
+        pokemonid,
+        pokemonName,
+        user
+    ) => {
         const response = await fetch('/api/pokemon', {
             method: 'POST',
             headers: {
@@ -50,7 +54,7 @@ export default function AvatarList({
                                 color='secondary'
                                 overlap='circular'
                                 onClick={() => {
-                                    handleSaveFavoritePokemon(
+                                    handleSaveRemoveFavoritePokemon(
                                         pokemon.id,
                                         pokemon.avatarName
                                     );

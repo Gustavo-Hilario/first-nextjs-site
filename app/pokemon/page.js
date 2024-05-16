@@ -5,7 +5,33 @@
 import Typography from '@mui/material/Typography';
 import Pokemon from './components/pokemon';
 
-export default function PokemonPage() {
+// import { getSession } from '@auth0/nextjs-auth0';
+
+// // Fetch the user favorite pokemons from the database
+// async function fetchDBUser() {
+//     const response = await fetch('http://localhost:3000/api/user', {
+//         method: 'GET',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//     });
+//     console.log('Response:', await response.json());
+//     // if (response.status === 200) {
+//     //     const data = await response.json();
+//     //     return data;
+//     // } else {
+//     //     console.log('Failed to fetch user data');
+//     // }
+// }
+
+export default async function PokemonPage() {
+    // // Fetch the user session
+    // const session = await getSession();
+    // console.log('Session:', session?.user);
+
+    // const dbUser = await fetchDBUser();
+    // console.log('DB User:', dbUser);
+
     return (
         <div>
             <Typography

@@ -18,12 +18,24 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 const NUMBER_OF_POKEMON_AVATARS = 20;
 
-const generateRandomPokemonIDs = (limit, offset) => {
+const generateRandomPokemonIDs = (limit, offset, dbUser) => {
     const numbers = new Set();
     while (numbers.size < NUMBER_OF_POKEMON_AVATARS) {
-        const randomNumber =
-            Math.floor(Math.random() * (limit - offset + 1)) + offset;
-        numbers.add(randomNumber);
+        if (
+            dbUser !== null &&
+            dbUser !== undefined &&
+            dbUser.favoritePokemons !== null &&
+            dbUser.favoritePokemons !== undefined
+        ) {
+            console.log(dbUser.favoritePokemons);
+            dbUser.favoritePokemons.forEach((favPokemon) => {
+                return numbers.add(favPokemon.id);
+            });
+        } else {
+            const randomNumber =
+                Math.floor(Math.random() * (limit - offset + 1)) + offset;
+            numbers.add(randomNumber);
+        }
     }
     return [...numbers];
 };
@@ -33,16 +45,40 @@ export default function Pokemon() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+    const [dbUser, setDbUser] = useState({});
     const [pokemonState, setPokemonState] = useState({
         pokemons: [],
         offset: 0,
         limit: 150,
         selectedPokemon: {},
         pokemonInfo: {},
-        randomPokemonIDs: generateRandomPokemonIDs(150, 0),
+        randomPokemonIDs: generateRandomPokemonIDs(150, 0, dbUser),
     });
 
     const [loadPokemons, setLoadPokemons] = useState(false);
+
+    // Fetch the user data from the database
+    useEffect(() => {
+        async function fetchDBUser() {
+            const response = await fetch('http://localhost:3000/api/user', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (response.status === 200) {
+                const data = await response.json();
+                setDbUser(data);
+                console.log('DB User:', data);
+            } else {
+                console.log('Failed to fetch user data');
+            }
+        }
+
+        fetchDBUser();
+    }, []);
+
+    console.log('DB User:', dbUser);
 
     useEffect(() => {
         async function fetchPokemons() {
@@ -84,7 +120,8 @@ export default function Pokemon() {
             limit: prevState.limit + 150,
             randomPokemonIDs: generateRandomPokemonIDs(
                 prevState.limit + 150,
-                prevState.limit
+                prevState.limit,
+                dbUser
             ),
         }));
         setLoadPokemons(!loadPokemons);
@@ -96,7 +133,7 @@ export default function Pokemon() {
             offset: 0,
             limit: 150,
             selectedPokemon: {},
-            randomPokemonIDs: generateRandomPokemonIDs(150, 0),
+            randomPokemonIDs: generateRandomPokemonIDs(150, 0, dbUser),
         }));
     };
 
@@ -136,6 +173,7 @@ export default function Pokemon() {
                     items={pokemonState.pokemons}
                     returnSelectedItem={handleSelectPokemon}
                     randomItemIDs={pokemonState.randomPokemonIDs}
+                    user={dbUser}
                 />
             </div>
             <Box
@@ -175,7 +213,8 @@ export default function Pokemon() {
                                     ...prevState,
                                     randomPokemonIDs: generateRandomPokemonIDs(
                                         prevState.limit,
-                                        prevState.offset
+                                        prevState.offset,
+                                        dbUser
                                     ),
                                 }));
                             }}
