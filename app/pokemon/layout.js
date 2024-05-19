@@ -4,6 +4,12 @@ export const metadata = {
     description: 'Check out some Pokemon info',
 };
 
+import Providers from '../components/StoreProviders';
+
 export default function DashboardLayout({ children }) {
-    return <section>{children}</section>;
+    return (
+        <section>
+            <Providers>{children}</Providers>
+        </section>
+    );
 }

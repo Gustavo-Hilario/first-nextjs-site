@@ -16,6 +16,15 @@ import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRou
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+// LEARN: Redux on Next.js >> https://redux.js.org/usage/nextjs
+import {
+    useAppDispatch,
+    useAppSelector,
+    useAppStore,
+} from '../../../store/hooks';
+
+import { addUser, removeUser } from '../../../store/features/userSlice';
+
 const NUMBER_OF_POKEMON_AVATARS = 20;
 
 const generateRandomPokemonIDs = (limit, offset, dbUser) => {
@@ -45,6 +54,17 @@ export default function Pokemon() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+    // Redux
+    const store = useAppStore();
+    const initialized = useRef(false);
+    if (!initialized.current) {
+        store.dispatch({ type: 'INIT' });
+        initialized.current = true;
+    }
+
+    const user = useAppSelector((state) => state.user.userInfo);
+    const dispatch = useAppDispatch();
+
     const [dbUser, setDbUser] = useState({});
     const [pokemonState, setPokemonState] = useState({
         pokemons: [],
@@ -69,6 +89,7 @@ export default function Pokemon() {
             if (response.status === 200) {
                 const data = await response.json();
                 setDbUser(data);
+                dispatch(addUser(data));
                 console.log('DB User:', data);
             } else {
                 console.log('Failed to fetch user data');
@@ -78,7 +99,7 @@ export default function Pokemon() {
         fetchDBUser();
     }, []);
 
-    console.log('DB User:', dbUser);
+    console.log('Redux User:', user);
 
     useEffect(() => {
         async function fetchPokemons() {
