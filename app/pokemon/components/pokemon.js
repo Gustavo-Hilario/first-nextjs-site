@@ -91,7 +91,7 @@ export default function Pokemon() {
             });
             if (response.status === 200) {
                 const data = await response.json();
-                // console.log('User FETCH Pokemon:', data.user);
+                console.log('User FETCH Pokemon:', data);
                 dispatch(addUser(data.user));
             } else {
                 console.log('Failed to fetch user data');

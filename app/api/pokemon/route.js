@@ -87,7 +87,11 @@ export async function POST(request) {
         });
     }
 
-    // console.log('Found user:', foundUser);
+    const user = {
+        id: foundUser._id,
+        email: foundUser.email,
+        favoritePokemons: foundUser.favoritePokemons,
+    };
 
-    return Response.json(foundUser);
+    return Response.json(user);
 }
