@@ -75,10 +75,10 @@ export async function POST(request) {
 
             // Update the user's favoritePokemons array
             foundUser.save();
-            console.log(
-                'Pokemon added to favorites. All favorites:',
-                foundUser.favoritePokemons
-            );
+            // console.log(
+            //     'Pokemon added to favorites. All favorites:',
+            //     foundUser.favoritePokemons
+            // );
         }
     } catch (error) {
         console.error('Error finding user:', error);
@@ -89,5 +89,5 @@ export async function POST(request) {
 
     // console.log('Found user:', foundUser);
 
-    return Response.json({ message: 'Hello World!' });
+    return Response.json(foundUser);
 }

@@ -5,7 +5,7 @@ import User from '../../lib/Models/User';
 export async function GET(Request) {
     let userId = Request.headers.get('x-user-id');
 
-    console.log('User ID:', userId);
+    // console.log('User ID:', userId);
 
     if (!userId) {
         return new Response(
@@ -44,10 +44,14 @@ export async function GET(Request) {
     let userFound;
     try {
         userFound = await User.findById(objectId);
-        console.log('User Found:', userFound);
+        // console.log('User Found:', userFound);
         return new Response(
             JSON.stringify({
-                user: userFound,
+                user: {
+                    email: userFound.email,
+                    updatedAt: userFound.updatedAt,
+                    favoritePokemons: userFound.favoritePokemons,
+                },
             })
         );
     } catch (error) {

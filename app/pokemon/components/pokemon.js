@@ -23,28 +23,30 @@ import {
     useAppStore,
 } from '../../../store/hooks';
 
-import { addUser, removeUser } from '../../../store/features/userSlice';
+import { addUser } from '../../../store/features/userSlice';
 
 const NUMBER_OF_POKEMON_AVATARS = 20;
 
-const generateRandomPokemonIDs = (limit, offset, dbUser) => {
+const generateRandomPokemonIDs = (limit, offset, user) => {
     const numbers = new Set();
     while (numbers.size < NUMBER_OF_POKEMON_AVATARS) {
-        if (
-            dbUser !== null &&
-            dbUser !== undefined &&
-            dbUser.favoritePokemons !== null &&
-            dbUser.favoritePokemons !== undefined
-        ) {
-            console.log(dbUser.favoritePokemons);
-            dbUser.favoritePokemons.forEach((favPokemon) => {
-                return numbers.add(favPokemon.id);
-            });
-        } else {
-            const randomNumber =
-                Math.floor(Math.random() * (limit - offset + 1)) + offset;
-            numbers.add(randomNumber);
-        }
+        // // WRONG: Including favorite pokemons in the random selection
+        // if (
+        //     user !== null &&
+        //     user !== undefined &&
+        //     user.favoritePokemons !== null &&
+        //     user.favoritePokemons !== undefined
+        // ) {
+        //     // console.log(user.favoritePokemons);
+        //     user.favoritePokemons.forEach((favPokemon, index) => {
+        //         if (index >= NUMBER_OF_POKEMON_AVATARS) return;
+        //         return numbers.add(favPokemon.id);
+        //     });
+        // } else {
+        const randomNumber =
+            Math.floor(Math.random() * (limit - offset + 1)) + offset;
+        numbers.add(randomNumber);
+        // }
     }
     return [...numbers];
 };
@@ -65,14 +67,13 @@ export default function Pokemon() {
     const user = useAppSelector((state) => state.user.userInfo);
     const dispatch = useAppDispatch();
 
-    const [dbUser, setDbUser] = useState({});
     const [pokemonState, setPokemonState] = useState({
         pokemons: [],
         offset: 0,
         limit: 150,
         selectedPokemon: {},
         pokemonInfo: {},
-        randomPokemonIDs: generateRandomPokemonIDs(150, 0, dbUser),
+        randomPokemonIDs: generateRandomPokemonIDs(150, 0, user),
     });
 
     const [loadPokemons, setLoadPokemons] = useState(false);
@@ -80,6 +81,8 @@ export default function Pokemon() {
     // Fetch the user data from the database
     useEffect(() => {
         async function fetchDBUser() {
+            // Fetch the user data from the database
+            // Return only non-sensitive user data
             const response = await fetch('http://localhost:3000/api/user', {
                 method: 'GET',
                 headers: {
@@ -88,9 +91,8 @@ export default function Pokemon() {
             });
             if (response.status === 200) {
                 const data = await response.json();
-                setDbUser(data);
-                dispatch(addUser(data));
-                console.log('DB User:', data);
+                // console.log('User FETCH Pokemon:', data.user);
+                dispatch(addUser(data.user));
             } else {
                 console.log('Failed to fetch user data');
             }
@@ -98,8 +100,6 @@ export default function Pokemon() {
 
         fetchDBUser();
     }, []);
-
-    console.log('Redux User:', user);
 
     useEffect(() => {
         async function fetchPokemons() {
@@ -131,7 +131,7 @@ export default function Pokemon() {
             fetchPokemonDetails();
         }
         fetchPokemons();
-    }, [loadPokemons]);
+    }, [loadPokemons, user]);
 
     const handleLoadMore = () => {
         if (pokemonState.limit >= 1050) return;
@@ -142,7 +142,7 @@ export default function Pokemon() {
             randomPokemonIDs: generateRandomPokemonIDs(
                 prevState.limit + 150,
                 prevState.limit,
-                dbUser
+                user
             ),
         }));
         setLoadPokemons(!loadPokemons);
@@ -154,7 +154,7 @@ export default function Pokemon() {
             offset: 0,
             limit: 150,
             selectedPokemon: {},
-            randomPokemonIDs: generateRandomPokemonIDs(150, 0, dbUser),
+            randomPokemonIDs: generateRandomPokemonIDs(150, 0, user),
         }));
     };
 
@@ -177,6 +177,12 @@ export default function Pokemon() {
         }));
     };
 
+    const updatingUserFromAvatarList = (data) => {
+        dispatch(addUser(data));
+    };
+
+    console.log('User:', user);
+
     return (
         <div>
             <div
@@ -194,7 +200,10 @@ export default function Pokemon() {
                     items={pokemonState.pokemons}
                     returnSelectedItem={handleSelectPokemon}
                     randomItemIDs={pokemonState.randomPokemonIDs}
-                    user={dbUser}
+                    userFavPokemons={user?.favoritePokemons}
+                    handleUpdateUserFavoritePokemons={
+                        updatingUserFromAvatarList
+                    }
                 />
             </div>
             <Box
@@ -235,7 +244,7 @@ export default function Pokemon() {
                                     randomPokemonIDs: generateRandomPokemonIDs(
                                         prevState.limit,
                                         prevState.offset,
-                                        dbUser
+                                        user
                                     ),
                                 }));
                             }}

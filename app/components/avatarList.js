@@ -1,5 +1,6 @@
 import { Box, Avatar, Grow, Badge, Typography } from '@mui/material';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 
 import { useRouter } from 'next/navigation';
 
@@ -7,14 +8,12 @@ export default function AvatarList({
     items,
     returnSelectedItem,
     randomItemIDs,
+    userFavPokemons,
+    handleUpdateUserFavoritePokemons,
 }) {
     const router = useRouter();
 
-    const handleSaveRemoveFavoritePokemon = async (
-        pokemonid,
-        pokemonName,
-        user
-    ) => {
+    const handleSaveRemoveFavoritePokemon = async (pokemonid, pokemonName) => {
         const response = await fetch('/api/pokemon', {
             method: 'POST',
             headers: {
@@ -32,12 +31,15 @@ export default function AvatarList({
             router.push('/signup');
         } else if (response.status === 200) {
             const data = await response.json();
-            // console.log(data);
+            // Update the user state as it was saved successfully
+            console.log('User from Avatar List:', data);
+            handleUpdateUserFavoritePokemons(data);
         } else {
             // Handle other status codes
             console.error('Failed to save/delete favorite pokemon');
         }
     };
+
     return (
         <>
             {items.map((pokemon, index) => {
@@ -50,8 +52,22 @@ export default function AvatarList({
                             timeout={500 + index * 2}
                         >
                             <Badge
-                                badgeContent={<FavoriteRoundedIcon />}
-                                color='secondary'
+                                badgeContent={
+                                    userFavPokemons?.find(
+                                        (fav) => fav.id === pokemon.id
+                                    ) ? (
+                                        <CheckCircleRoundedIcon />
+                                    ) : (
+                                        <FavoriteRoundedIcon />
+                                    )
+                                }
+                                color={
+                                    userFavPokemons?.find(
+                                        (fav) => fav.id === pokemon.id
+                                    )
+                                        ? 'default'
+                                        : 'secondary'
+                                }
                                 overlap='circular'
                                 onClick={() => {
                                     handleSaveRemoveFavoritePokemon(
