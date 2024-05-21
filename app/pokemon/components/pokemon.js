@@ -91,7 +91,7 @@ export default function Pokemon() {
             });
             if (response.status === 200) {
                 const data = await response.json();
-                console.log('User FETCH Pokemon:', data);
+                // console.log('User FETCH Pokemon:', data);
                 dispatch(addUser(data.user));
             } else {
                 console.log('Failed to fetch user data');
@@ -346,7 +346,11 @@ export default function Pokemon() {
                 </Grid>
             </Box>
 
-            <PokemonDetail selectedPokemon={pokemonState.selectedPokemon} />
+            <PokemonDetail
+                selectedPokemon={pokemonState.selectedPokemon}
+                userFavPokemons={user?.favoritePokemons}
+                handleUpdateUserFavoritePokemons={updatingUserFromAvatarList}
+            />
         </div>
     );
 }

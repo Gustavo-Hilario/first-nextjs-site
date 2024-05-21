@@ -2,6 +2,8 @@ import { Box, Avatar, Grow, Badge, Typography } from '@mui/material';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 
+import { handleSaveRemoveFavoritePokemon } from '../pokemon/utils/pokemonUtils';
+
 import { useRouter } from 'next/navigation';
 
 export default function AvatarList({
@@ -12,34 +14,6 @@ export default function AvatarList({
     handleUpdateUserFavoritePokemons,
 }) {
     const router = useRouter();
-
-    const handleSaveRemoveFavoritePokemon = async (pokemonid, pokemonName) => {
-        const response = await fetch('/api/pokemon', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                pokemonID: pokemonid,
-                pokemonName: pokemonName,
-            }),
-        });
-
-        // If middleware returns a 401, you can redirect to a signup page
-        if (response.status === 401) {
-            // Redirect or show an error using the router (only option for events handlers)
-            router.push('/signup');
-        } else if (response.status === 200) {
-            const data = await response.json();
-            // Update the user state as it was saved successfully
-            console.log('User from Avatar List:', data);
-            handleUpdateUserFavoritePokemons(data);
-        } else {
-            // Handle other status codes
-            console.error('Failed to save/delete favorite pokemon');
-        }
-    };
-
     return (
         <>
             {items.map((pokemon, index) => {
@@ -69,10 +43,21 @@ export default function AvatarList({
                                         : 'secondary'
                                 }
                                 overlap='circular'
-                                onClick={() => {
+                                onClick={(ev) => {
+                                    if (
+                                        !ev.target
+                                            .closest('svg')
+                                            ?.classList.contains(
+                                                'MuiSvgIcon-root'
+                                            )
+                                    ) {
+                                        return;
+                                    }
                                     handleSaveRemoveFavoritePokemon(
                                         pokemon.id,
-                                        pokemon.avatarName
+                                        pokemon.avatarName,
+                                        handleUpdateUserFavoritePokemons,
+                                        router
                                     );
                                 }}
                             >

@@ -1,38 +1,33 @@
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import { CardActionArea } from '@mui/material';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
+import {
+    Card,
+    CardContent,
+    CardMedia,
+    CardActionArea,
+    Typography,
+    Button,
+    Box,
+    Badge,
+} from '@mui/material';
 
-export default function PokemonDetail({ selectedPokemon }) {
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+
+import { useRouter } from 'next/navigation';
+import { handleSaveRemoveFavoritePokemon } from '../utils/pokemonUtils';
+
+export default function PokemonDetail({
+    selectedPokemon,
+    userFavPokemons,
+    handleUpdateUserFavoritePokemons,
+}) {
+    const router = useRouter();
+
     const selectedPokemonExists = () => {
         return Object.keys(selectedPokemon).length !== 0;
     };
 
     return (
         <div>
-            <Box
-                component='section'
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: 2,
-                    '& button': { m: 1, fontSize: '0.6rem' },
-                }}
-            >
-                <Typography
-                    variant='h4'
-                    sx={{
-                        textAlign: 'center',
-                    }}
-                >
-                    {selectedPokemonExists()
-                        ? selectedPokemon.avatarName
-                        : 'Select a Pokemon'}
-                </Typography>
-            </Box>
             {!selectedPokemonExists() ? (
                 <Typography
                     variant='body1'
@@ -57,12 +52,65 @@ export default function PokemonDetail({ selectedPokemon }) {
                 >
                     <Card sx={{ maxWidth: 345 }}>
                         <CardActionArea>
+                            <Badge
+                                badgeContent={
+                                    userFavPokemons?.find(
+                                        (fav) => fav.id === selectedPokemon.id
+                                    ) ? (
+                                        <CheckCircleRoundedIcon />
+                                    ) : (
+                                        <FavoriteRoundedIcon />
+                                    )
+                                }
+                                color={
+                                    userFavPokemons?.find(
+                                        (fav) => fav.id === selectedPokemon.id
+                                    )
+                                        ? 'default'
+                                        : 'secondary'
+                                }
+                                overlap='circular'
+                                sx={{
+                                    width: '100%',
+                                    justifyContent: 'center',
+                                    padding: '15px 0',
+                                }}
+                                onClick={(ev) => {
+                                    if (
+                                        !ev.target
+                                            .closest('svg')
+                                            ?.classList.contains(
+                                                'MuiSvgIcon-root'
+                                            )
+                                    ) {
+                                        return;
+                                    }
+                                    handleSaveRemoveFavoritePokemon(
+                                        selectedPokemon.id,
+                                        selectedPokemon.avatarName,
+                                        handleUpdateUserFavoritePokemons,
+                                        router
+                                    );
+                                }}
+                            >
+                                <Typography
+                                    variant='h4'
+                                    sx={{
+                                        textAlign: 'center',
+                                    }}
+                                >
+                                    {selectedPokemonExists()
+                                        ? selectedPokemon.avatarName
+                                        : 'Select a Pokemon'}
+                                </Typography>
+                            </Badge>
                             <CardMedia
                                 component='img'
                                 height='auto'
                                 image={selectedPokemon.avatarImage}
                                 alt={selectedPokemon.avatarName}
                             />
+
                             <CardContent>
                                 <Typography
                                     gutterBottom

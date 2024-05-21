@@ -48,6 +48,7 @@ export async function POST(request) {
         });
     }
 
+    // Saving the favorite pokemon to the user's favorites
     try {
         // Check if the pokemon already exists in the user's favorites. If it does, remove it
         const exists = foundUser.favoritePokemons.some(
@@ -73,12 +74,7 @@ export async function POST(request) {
                 name: pokemon.pokemonName,
             });
 
-            // Update the user's favoritePokemons array
             foundUser.save();
-            // console.log(
-            //     'Pokemon added to favorites. All favorites:',
-            //     foundUser.favoritePokemons
-            // );
         }
     } catch (error) {
         console.error('Error finding user:', error);
