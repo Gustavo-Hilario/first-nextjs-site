@@ -24,6 +24,7 @@ export default function DisplayRange({ loaded, rangeBase, rangeTop }) {
                 {/* {`Displaying ${NUMBER_OF_POKEMON_AVATARS} Pokemons out of `} */}
                 <Tooltip
                     title={`Between elements ${rangeBase} and ${rangeTop} from the list of all pokemons`}
+                    followCursor
                 >
                     <InfoRoundedIcon fontSize='small' />
                 </Tooltip>
