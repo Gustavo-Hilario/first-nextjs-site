@@ -27,7 +27,6 @@ import LogoDevIcon from '@mui/icons-material/LogoDev';
 import Slide from '@mui/material/Slide';
 
 import LoggedInMenu from './loggedInMenu';
-import AnimatedCursor from './animatedCursor';
 
 // const pages = ['Products', 'Pricing', 'Blog'];
 
@@ -61,7 +60,6 @@ export default function Header() {
 
     return (
         <>
-            <AnimatedCursor />
             <AppBar
                 position='static'
                 sx={{
@@ -71,7 +69,7 @@ export default function Header() {
                 <Container
                     maxWidth='xl'
                     sx={{
-                        my: '1rem',
+                        my: '2rem',
                     }}
                 >
                     <Slide
