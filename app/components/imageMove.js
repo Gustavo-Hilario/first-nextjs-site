@@ -13,6 +13,7 @@ export default function ImageMove({ image, alt, isMobile, translate }) {
         margin: translate.margin,
     });
 
+    // LEARN: Improve image displacement logic!
     const handleMouseEnter = (e) => {
         mouseEnterPosition.current = {
             x: e.clientX,
@@ -58,23 +59,23 @@ export default function ImageMove({ image, alt, isMobile, translate }) {
         };
 
         const moveImagex =
-            Math.abs(mousePosition.current.x - imagePosition.topLeft.x) >
+            Math.abs(imagePosition.topLeft.x - mousePosition.current.x) >
                 Math.abs(translateE.current.x) + translateE.current.margin &&
-            Math.abs(mousePosition.current.x - imagePosition.topRight.x) >
+            Math.abs(imagePosition.topRight.x - mousePosition.current.x) >
                 Math.abs(translateE.current.x) + translateE.current.margin &&
-            Math.abs(mousePosition.current.x - imagePosition.bottomLeft.x) >
+            Math.abs(imagePosition.bottomLeft.x - mousePosition.current.x) >
                 Math.abs(translateE.current.x) + translateE.current.margin &&
-            Math.abs(mousePosition.current.x - imagePosition.bottomRight.x) >
+            Math.abs(imagePosition.bottomRight.x - mousePosition.current.x) >
                 Math.abs(translateE.current.x) + translateE.current.margin;
 
         const moveImagey =
-            Math.abs(mousePosition.current.y - imagePosition.topLeft.y) >
+            Math.abs(imagePosition.topLeft.y - mousePosition.current.y) >
                 Math.abs(translateE.current.y) + translateE.current.margin &&
-            Math.abs(mousePosition.current.y - imagePosition.topRight.y) >
+            Math.abs(imagePosition.topRight.y - mousePosition.current.y) >
                 Math.abs(translateE.current.y) + translateE.current.margin &&
-            Math.abs(mousePosition.current.y - imagePosition.bottomLeft.y) >
+            Math.abs(imagePosition.bottomLeft.y - mousePosition.current.y) >
                 Math.abs(translateE.current.y) + translateE.current.margin &&
-            Math.abs(mousePosition.current.y - imagePosition.bottomRight.y) >
+            Math.abs(imagePosition.bottomRight.y - mousePosition.current.y) >
                 Math.abs(translateE.current.y) + translateE.current.margin;
 
         const moveImage = moveImagex && moveImagey;

@@ -70,6 +70,7 @@ export default function Header() {
                     maxWidth='xl'
                     sx={{
                         my: '2rem',
+                        p: 0,
                     }}
                 >
                     <Slide

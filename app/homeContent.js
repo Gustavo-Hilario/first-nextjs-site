@@ -9,6 +9,7 @@ import profilePulga from '../public/profilePulga.jpeg';
 
 import AnimatedCursor from './components/animatedCursor';
 import ImageMove from './components/imageMove';
+import PortExpFlipcards from './components/portExpFlipcards';
 
 export default function HomeContent() {
     const theme = useTheme();
@@ -28,6 +29,7 @@ export default function HomeContent() {
                     Based in Lima
                 </Typography>
             </Box>
+            {/* Email / Image / Name */}
             <Grid
                 container
                 component='section'
@@ -68,6 +70,8 @@ export default function HomeContent() {
                     </Typography>
                 </Grid>
             </Grid>
+
+            {/* Work Experience */}
             <Box
                 component='section'
                 sx={{
@@ -76,9 +80,10 @@ export default function HomeContent() {
             >
                 <Typography variant='h1'>Work Experience</Typography>
 
-                <Typography variant='body1'>
+                <Typography variant='body1' sx={{ mb: 3 }}>
                     This is a personal website to showcase my work and projects.
                 </Typography>
+                <PortExpFlipcards />
             </Box>
             <Box
                 component='section'
