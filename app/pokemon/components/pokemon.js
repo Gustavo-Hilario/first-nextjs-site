@@ -5,6 +5,8 @@ import { getAllPokemons, getPokemonDetail } from '../../lib/data/pokemonAPI';
 import PokemonDetail from './pokemonDetail';
 import AvatarList from '../../components/avatarList';
 import DisplayRange from '../../components/displayRange';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { Autocomplete, TextField, Button, Box } from '@mui/material';
 
@@ -179,9 +181,19 @@ export default function Pokemon() {
 
     const updatingUserFromAvatarList = (data) => {
         dispatch(addUser(data));
-    };
 
-    console.log('User:', user);
+        // Display notification
+        toast.success('🦄 Pokémon saved!', {
+            position: 'top-right',
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'dark',
+        });
+    };
 
     return (
         <div>
@@ -204,6 +216,13 @@ export default function Pokemon() {
                     handleUpdateUserFavoritePokemons={
                         updatingUserFromAvatarList
                     }
+                />
+                <ToastContainer
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
                 />
             </div>
             <Box

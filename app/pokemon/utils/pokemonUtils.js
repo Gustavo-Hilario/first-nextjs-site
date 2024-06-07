@@ -17,15 +17,20 @@ export const handleSaveRemoveFavoritePokemon = async (
 
     // If middleware returns a 401, you can redirect to a signup page
     if (response.status === 401) {
+        // Set a flag in localStorage
+        localStorage.setItem('needsLoginNotification', 'true');
+
         // Redirect or show an error using the router (only option for events handlers)
         router.push('/signup');
     } else if (response.status === 200) {
         const data = await response.json();
         // Update the user state as it was saved successfully
-        console.log('User from Avatar List:', data);
+        // console.log('User from Avatar List:', data);
         handleUpdateUserFavoritePokemons(data);
+        return true;
     } else {
         // Handle other status codes
         console.error('Failed to save/delete favorite pokemon');
+        return false;
     }
 };

@@ -1,4 +1,4 @@
-import { Box, Avatar, Grow, Badge, Typography } from '@mui/material';
+import { Box, Avatar, Grow, Badge } from '@mui/material';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 
@@ -43,7 +43,7 @@ export default function AvatarList({
                                         : 'secondary'
                                 }
                                 overlap='circular'
-                                onClick={(ev) => {
+                                onClick={async (ev) => {
                                     if (
                                         !ev.target
                                             .closest('svg')
@@ -53,12 +53,15 @@ export default function AvatarList({
                                     ) {
                                         return;
                                     }
-                                    handleSaveRemoveFavoritePokemon(
-                                        pokemon.id,
-                                        pokemon.avatarName,
-                                        handleUpdateUserFavoritePokemons,
-                                        router
-                                    );
+                                    const savedPokemon =
+                                        await handleSaveRemoveFavoritePokemon(
+                                            pokemon.id,
+                                            pokemon.avatarName,
+                                            handleUpdateUserFavoritePokemons,
+                                            router
+                                        );
+
+                                    console.log('Saved Pokemon', savedPokemon);
                                 }}
                             >
                                 <Box>
