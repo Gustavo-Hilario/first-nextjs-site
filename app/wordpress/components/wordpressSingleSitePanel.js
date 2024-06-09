@@ -12,6 +12,8 @@ import {
     CardActions,
 } from '@mui/material';
 
+import A8CLogo from '../../../public/a8c-logo.png';
+
 const postDateOptions = {
     // weekday: 'long',
     year: 'numeric',
@@ -134,7 +136,7 @@ export default function WordPressSingleSitePanel({ site }) {
                             ? site.icon.img
                             : site.logo.url
                             ? site.logo.url
-                            : '/a8cLogo.png'
+                            : A8CLogo.src
                     }
                 />
 

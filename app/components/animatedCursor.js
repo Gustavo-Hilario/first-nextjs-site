@@ -63,13 +63,13 @@ export default function AnimatedCursor({
             previousTimeRef.current = time;
             requestRef.current = requestAnimationFrame(animateOuterCursor);
         },
-        [requestRef] // eslint-disable-line
+        [coords] // Note: add coords as dependency
     );
 
-    useEffect(
-        () => (requestRef.current = requestAnimationFrame(animateOuterCursor)),
-        [animateOuterCursor]
-    );
+    useEffect(() => {
+        requestRef.current = requestAnimationFrame(animateOuterCursor);
+        return () => cancelAnimationFrame(requestRef.current); // Ensure cleanup is a function
+    }, [animateOuterCursor]);
 
     const onMouseDown = useCallback(() => setIsActive(true), []);
     const onMouseUp = useCallback(() => setIsActive(false), []);
@@ -117,47 +117,35 @@ export default function AnimatedCursor({
         const clickables = document.querySelectorAll(
             'a, input[type="submit"], input[type="image"], label[for], select, button, .link'
         );
+        const handleMouseOver = () => setIsActive(true);
+        const handleClick = () => {
+            setIsActive(true);
+            setIsActiveClickable(false);
+        };
+        const handleMouseDown = () => setIsActiveClickable(true);
+        const handleMouseUp = () => setIsActive(true);
+        const handleMouseOut = () => {
+            setIsActive(false);
+            setIsActiveClickable(false);
+        };
+
         clickables.forEach((el) => {
             el.style.cursor = 'none';
 
-            el.addEventListener('mouseover', () => {
-                setIsActive(true);
-            });
-            el.addEventListener('click', () => {
-                setIsActive(true);
-                setIsActiveClickable(false);
-            });
-            el.addEventListener('mousedown', () => {
-                setIsActiveClickable(true);
-            });
-            el.addEventListener('mouseup', () => {
-                setIsActive(true);
-            });
-            el.addEventListener('mouseout', () => {
-                setIsActive(false);
-                setIsActiveClickable(false);
-            });
+            el.addEventListener('mouseover', handleMouseOver);
+            el.addEventListener('click', handleClick);
+            el.addEventListener('mousedown', handleMouseDown);
+            el.addEventListener('mouseup', handleMouseUp);
+            el.addEventListener('mouseout', handleMouseOut);
         });
 
         return () => {
             clickables.forEach((el) => {
-                el.removeEventListener('mouseover', () => {
-                    setIsActive(true);
-                });
-                el.removeEventListener('click', () => {
-                    setIsActive(true);
-                    setIsActiveClickable(false);
-                });
-                el.removeEventListener('mousedown', () => {
-                    setIsActiveClickable(true);
-                });
-                el.removeEventListener('mouseup', () => {
-                    setIsActive(true);
-                });
-                el.removeEventListener('mouseout', () => {
-                    setIsActive(false);
-                    setIsActiveClickable(false);
-                });
+                el.removeEventListener('mouseover', handleMouseOver);
+                el.removeEventListener('click', handleClick);
+                el.removeEventListener('mousedown', handleMouseDown);
+                el.removeEventListener('mouseup', handleMouseUp);
+                el.removeEventListener('mouseout', handleMouseOut);
             });
         };
     }, [isActive]);

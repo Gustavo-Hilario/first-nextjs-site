@@ -7,11 +7,10 @@ const PortExpFlipcard = ({ index, cardInfo }) => {
     const [isFlipped, setIsFlipped] = useState(false);
 
     const handleFlip = (index) => {
-        console.log(index);
         setIsFlipped(!isFlipped);
     };
 
-    console.log(cardInfo);
+    // console.log(cardInfo);
 
     return (
         <Box

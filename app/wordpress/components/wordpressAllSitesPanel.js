@@ -87,10 +87,9 @@ export default function WordPressAllSitesPanel({
             />
             {wordPressComSites.sites.map((site, index) => {
                 return (
-                    <>
+                    <Box key={site.ID}>
                         {index < numberSitesLoading && (
                             <Accordion
-                                key={site.ID}
                                 id={site.ID}
                                 expanded={
                                     expandedItem === site.ID ? true : false
@@ -196,7 +195,7 @@ export default function WordPressAllSitesPanel({
                                 </AccordionDetails>
                             </Accordion>
                         )}
-                    </>
+                    </Box>
                 );
             })}
             {wordPressComSites.sites.length > numberSitesLoading && (

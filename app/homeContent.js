@@ -7,13 +7,11 @@ import { useTheme } from '@mui/material/styles';
 import FiberManualRecordRoundedIcon from '@mui/icons-material/FiberManualRecordRounded';
 
 import Link from 'next/link';
-import Tilt from 'react-parallax-tilt';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import profilePulga from '../public/profilePulga.jpeg';
 
-import AnimatedCursor from './components/animatedCursor';
 import ImageMove from './components/imageMove';
 import PortExpFlipcards from './components/portExpFlipcards';
 import PortSkills from './components/portSkills';
@@ -25,7 +23,6 @@ export default function HomeContent() {
 
     return (
         <>
-            <AnimatedCursor />
             <Box component='section' textAlign={'center'} my={2}>
                 <Typography
                     variant={isMobile ? 'h3' : 'h1'}
