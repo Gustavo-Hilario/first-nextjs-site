@@ -145,8 +145,13 @@ export default function HomeContent() {
                 <Typography variant='h1' textAlign='center'>
                     Skills
                 </Typography>
-                <Typography variant='body1' textAlign='center' mb={4}>
-                    This is a personal website to showcase my work and projects.
+                <Typography
+                    variant='body1'
+                    textAlign='center'
+                    mb={4}
+                    color={'text.secondary'}
+                >
+                    I am passionate about learning new technologies and tools 🚀
                 </Typography>
                 <Box
                     sx={{
@@ -172,8 +177,13 @@ export default function HomeContent() {
                 <Typography variant='h1' textAlign='center'>
                     Languages
                 </Typography>
-                <Typography variant='body1' textAlign='center' mb={4}>
-                    This is a personal website to showcase my work and projects.
+                <Typography
+                    variant='body1'
+                    textAlign='center'
+                    mb={4}
+                    color={'text.secondary'}
+                >
+                    The languages I know and the list is always growing 🇫🇷🚀
                 </Typography>
                 <Box
                     sx={{

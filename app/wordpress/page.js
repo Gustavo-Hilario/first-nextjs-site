@@ -1,54 +1,16 @@
-import { cookies } from 'next/headers';
+import { Suspense } from 'react';
+import Loading from './loading';
 
 import Header from '../components/header';
+import WordPressSites from './components/wordpressSites';
 
-import Button from '@mui/material/Button';
-import Link from 'next/link';
-
-import WordPressSitesContainer from './components/wordpressSitesContainer';
-
-const wordPressComBaseUrl = 'https://public-api.wordpress.com/rest/v1.1';
-
-async function fetchWordPressComSites(token) {
-    const response = await fetch(`${wordPressComBaseUrl}/me/sites`, {
-        method: 'GET',
-        site_visibility: 'visible',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-
-    if (response.ok) {
-        return await response.json();
-    } else {
-        throw new Error(`Failed to fetch sites: ${response.statusText}`);
-    }
-}
-
-export default async function WordPressComPage() {
-    // LEARN More about NextJS cookies and how cookies work in general
-    const cookieStore = cookies();
-    const wordpressComToken = cookieStore.get('wordpresscom_token').value;
-
-    const sites = await fetchWordPressComSites(wordpressComToken);
-
+export default function WordPressComPage() {
     return (
         <>
             <Header />
-
-            {!wordpressComToken && (
-                <Link
-                    href={`https://public-api.wordpress.com/oauth2/authorize?client_id=${process.env.WORDPRESS_CLIENT_ID}&redirect_uri=${process.env.WORDPRESS_REDIRECT_URI}&response_type=code&scope=${process.env.WORDPRESS_SCOPE}`}
-                >
-                    <Button size='small' variant='bggradient' color='secondary'>
-                        WordPress.com Authorization
-                    </Button>
-                </Link>
-            )}
-
-            {wordpressComToken && (
-                <WordPressSitesContainer wordPressComSites={sites} />
-            )}
+            <Suspense fallback={<Loading />}>
+                <WordPressSites />
+            </Suspense>
         </>
     );
 }
