@@ -4,18 +4,22 @@ import { useState } from 'react';
 
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import FiberManualRecordRoundedIcon from '@mui/icons-material/FiberManualRecordRounded';
 
 import Link from 'next/link';
+import Tilt from 'react-parallax-tilt';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import profilePulga from '../public/profilePulga.jpeg';
 
 import AnimatedCursor from './components/animatedCursor';
 import ImageMove from './components/imageMove';
 import PortExpFlipcards from './components/portExpFlipcards';
-import Tilt from 'react-parallax-tilt';
+import PortSkills from './components/portSkills';
+import PortLangs from './components/portLangs';
 
 export default function HomeContent() {
-    const [tiltScale, setTiltScale] = useState(1);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -48,6 +52,7 @@ export default function HomeContent() {
                     lg: {
                         minHeight: '80vh',
                     },
+                    gap: isMobile ? '20px' : '0',
                 }}
             >
                 <Grid item xs={12} lg={3}>
@@ -55,9 +60,26 @@ export default function HomeContent() {
                         <Link
                             href='mailto:info@gustavohilario.com'
                             className='copy-link-effect'
+                            onClick={(e) => {
+                                navigator.clipboard.writeText(
+                                    'mailto:info@gustavohilario.com'
+                                );
+
+                                toast.success('🦄 Email saved!', {
+                                    position: 'top-right',
+                                    autoClose: 1000,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                    progress: undefined,
+                                    theme: 'dark',
+                                });
+                            }}
                         >
                             info@gustavohilario.com
                         </Link>
+                        <ToastContainer />
                     </Typography>
                 </Grid>
                 <Grid item xs={12} lg={6}>
@@ -81,21 +103,49 @@ export default function HomeContent() {
                     minHeight: '100vh',
                 }}
             >
-                <Typography variant='h1'>Work Experience</Typography>
-
-                <Typography variant='body1' sx={{ mb: 3 }}>
+                <Typography
+                    variant='h1'
+                    sx={{
+                        textAlign: 'center',
+                        mt: 3,
+                    }}
+                >
+                    My Journey
+                </Typography>
+                <Typography variant='body1' sx={{ textAlign: 'center', mb: 3 }}>
                     This is a personal website to showcase my work and projects.
                 </Typography>
+
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'column',
+                        gap: '1rem',
+                        my: 3,
+                    }}
+                    color={'text.secondary'}
+                >
+                    <FiberManualRecordRoundedIcon />
+                    <FiberManualRecordRoundedIcon />
+                    <FiberManualRecordRoundedIcon />
+                </Box>
+
                 <PortExpFlipcards />
             </Box>
+
+            {/* SKILLS */}
             <Box
                 component='section'
                 sx={{
                     minHeight: '50vh',
                 }}
             >
-                <Typography variant='h1'>Skills</Typography>
-                <Typography variant='body1'>
+                <Typography variant='h1' textAlign='center'>
+                    Skills
+                </Typography>
+                <Typography variant='body1' textAlign='center' mb={4}>
                     This is a personal website to showcase my work and projects.
                 </Typography>
                 <Box
@@ -103,81 +153,40 @@ export default function HomeContent() {
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        width: '90%',
-                        gap: '2rem',
+                        flexWrap: 'wrap',
+                        gap: '1rem',
+                        my: 3,
                     }}
                 >
-                    <Tilt
-                        scale={tiltScale}
-                        transitionSpeed={2500}
-                        style={{
-                            width: '400px',
-                        }}
-                    >
-                        <div
-                            className='background-stripes tilt-scale'
-                            style={{
-                                padding: '1rem',
-                                background: 'white',
-                            }}
-                            onMouseEnter={(ev) => {
-                                setTiltScale(1.2);
-                            }}
-                            onMouseLeave={(ev) => {
-                                setTiltScale(1);
-                            }}
-                        >
-                            <div className='header'>
-                                <div>Scale x{tiltScale}</div>
-                                <hr />
-                            </div>
-                        </div>
-                    </Tilt>
-                    <Tilt
-                        className='background-stripes parallax-effect'
-                        perspective={500}
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            width: '300px',
-                            height: '300px',
-                            backgroundColor: 'darkgreen',
-                            color: 'white',
-                            border: '5px solid black',
-                            borderRadius: '20px',
-                            transformStyle: 'preserve-3d',
-                        }}
-                    >
-                        <div
-                            className='inner-element'
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                fontSize: '35px',
-                                color: 'white',
-                                transform: 'translateZ(60px)',
-                            }}
-                        >
-                            <div>React</div>
-                            <div>⚛️</div>
-                        </div>
-                    </Tilt>
+                    <PortSkills />
                 </Box>
             </Box>
+
+            {/* LANGUAGES */}
             <Box
                 component='section'
                 sx={{
                     minHeight: '50vh',
                 }}
             >
-                <Typography variant='h1'>Languages</Typography>
-                <Typography variant='body1'>
+                <Typography variant='h1' textAlign='center'>
+                    Languages
+                </Typography>
+                <Typography variant='body1' textAlign='center' mb={4}>
                     This is a personal website to showcase my work and projects.
                 </Typography>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        width: '100%',
+                        gap: '2rem',
+                    }}
+                >
+                    <PortLangs />
+                </Box>
             </Box>
         </>
     );

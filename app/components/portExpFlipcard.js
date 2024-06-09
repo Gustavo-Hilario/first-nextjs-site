@@ -26,13 +26,17 @@ const PortExpFlipcard = ({ index, cardInfo }) => {
             onMouseLeave={() => handleFlip(index)}
         >
             <Box className='flip-card-inner'>
-                <Box className='flip-card-front'>
+                <Box
+                    className='flip-card-front'
+                    bgcolor={'background.dashcontent'}
+                >
                     <Box>
                         <Box
                             className='flip-card-front-header'
                             sx={{
                                 display: 'flex',
                                 alignItems: 'center',
+                                justifyContent: 'center',
                                 flexWrap: 'wrap',
                                 gap: '1rem',
                             }}
@@ -60,20 +64,27 @@ const PortExpFlipcard = ({ index, cardInfo }) => {
                             </Typography>
                         </Box>
                         <Box>
-                            <Typography variant='h6' sx={{ my: 2 }}>
+                            <Typography
+                                variant='h6'
+                                sx={{ my: 2 }}
+                                color={'text.secondary'}
+                            >
                                 {cardInfo.title}
                             </Typography>
 
                             <Typography variant='body1'>
                                 {cardInfo.description}
                             </Typography>
-                            <Typography variant='body1'>
+                            <Typography
+                                variant='body1'
+                                color={'text.secondary'}
+                            >
                                 {`${cardInfo.startDate} – ${cardInfo.endDate}`}
                             </Typography>
                         </Box>
                     </Box>
                 </Box>
-                <Box className='flip-card-back'>
+                <Box className='flip-card-back' bgcolor={'text.secondary'}>
                     <Box>
                         <Typography variant='body1'>
                             {cardInfo.backtext}
