@@ -5,6 +5,11 @@ const favoritePokemons = new Schema({
     name: String,
 });
 
+const savedSites = new Schema({
+    id: Number,
+    url: String,
+});
+
 const userSchema = new Schema(
     {
         _id: Schema.Types.ObjectId,
@@ -13,6 +18,7 @@ const userSchema = new Schema(
         password: String,
         age: Number,
         favoritePokemons: [favoritePokemons],
+        favWPComSites: [savedSites],
     },
     {
         timestamps: true,

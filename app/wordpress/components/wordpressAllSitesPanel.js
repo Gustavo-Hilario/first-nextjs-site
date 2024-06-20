@@ -17,8 +17,12 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
+import StarOutlineRoundedIcon from '@mui/icons-material/StarOutlineRounded';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import saveFavWPSite from '../utils/wordpressUtils';
 
 export default function WordPressAllSitesPanel({
     wordPressComSites,
@@ -26,6 +30,8 @@ export default function WordPressAllSitesPanel({
     setExpandedItem,
     setSelectedSiteInfo,
 }) {
+    const router = useRouter();
+
     const [numberSitesLoading, setNumberSitesLoading] = useState(20);
     // console.log(wordPressComSites);
 
@@ -169,7 +175,20 @@ export default function WordPressAllSitesPanel({
                                         </a>
                                     </Box>
 
+                                    <StarOutlineRoundedIcon
+                                        className='clickable'
+                                        onClick={async (ev) => {
+                                            ev.stopPropagation();
+
+                                            await saveFavWPSite(
+                                                site.ID,
+                                                site.URL,
+                                                router
+                                            );
+                                        }}
+                                    />
                                     <Badge
+                                        className='clickable'
                                         badgeContent={site.subscribers_count}
                                         color='secondary'
                                         anchorOrigin={{

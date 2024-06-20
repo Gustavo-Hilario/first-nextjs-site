@@ -115,7 +115,7 @@ export default function AnimatedCursor({
 
     useEffect(() => {
         const clickables = document.querySelectorAll(
-            'a, input[type="submit"], input[type="image"], label[for], select, button, .link'
+            'a, input[type="submit"], input[type="image"], label[for], select, button, .link, .clickable'
         );
         const handleMouseOver = () => setIsActive(true);
         const handleClick = () => {
@@ -183,8 +183,10 @@ export default function AnimatedCursor({
 
     return (
         <Fragment>
-            <div ref={cursorOuterRef} style={styles.cursorOuter} />
-            <div ref={cursorInnerRef} style={styles.cursorInner} />
+            <div style={styles.cursor}>
+                <div ref={cursorOuterRef} style={styles.cursorOuter} />
+                <div ref={cursorInnerRef} style={styles.cursorInner} />
+            </div>
         </Fragment>
     );
 }

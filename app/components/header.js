@@ -171,7 +171,7 @@ export default function Header() {
                                         variant='h5'
                                         noWrap
                                         component='h1'
-                                        href='#app-bar-with-responsive-menu'
+                                        href='#'
                                         sx={{
                                             fontFamily: 'monospace',
                                             fontWeight: 700,

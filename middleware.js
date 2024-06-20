@@ -25,5 +25,6 @@ export default withMiddlewareAuthRequired({
 });
 
 export const config = {
-    matcher: ['/api/user', '/api/pokemon'],
+    matcher: ['/api/user', '/api/pokemon', '/api/wordpress/site/fav'],
+    // '/api/wordpress/site/fav' is commented out
 };

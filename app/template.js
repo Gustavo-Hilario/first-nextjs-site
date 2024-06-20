@@ -6,7 +6,7 @@ export default function Template({ children }) {
     return (
         <>
             <AnimatedCursor />
-            {children}
+            <>{children}</>
         </>
     );
 }

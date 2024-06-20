@@ -15,9 +15,12 @@ export default function SignupContent() {
         const needsLoginNotification = localStorage.getItem(
             'needsLoginNotification'
         );
+
+        const notificationMessage = localStorage.getItem('notificationMessage');
+
         if (needsLoginNotification === 'true') {
             // Show the notification
-            toast.error('🦄 Please log in to save your Pokémon!', {
+            toast.error(notificationMessage, {
                 position: 'top-right',
                 autoClose: 5000,
                 hideProgressBar: false,
